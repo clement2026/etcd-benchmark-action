@@ -67,7 +67,7 @@ jobs:
             ./etcd/tools/rw-heatmaps/rw-heatmaps $BASE.csv $freq.csv -t "$BASE vs $freq" -o $freq
           done
       - name: ls
-        run: ls
+        run: ls -lh
       - name: zip
         run: zip -r archive.zip *.csv *.jpg ./scripts/*.sh
       - name: write names to env
@@ -104,9 +104,9 @@ jobs:
 
             for freq in $FREQUENCIES; do
               varname=COMPARE_READ_OBJECT_NAME_$freq
-              wrangler r2 object put $BUCKET/${!varname} --file=$freq-read.jpg
+              wrangler r2 object put $BUCKET/${!varname} --file=$freq'_read.jpg'
               varname=COMPARE_WRITE_OBJECT_NAM_$freq
-              wrangler r2 object put $BUCKET/${!varname} --file=$freq-write.jpg
+              wrangler r2 object put $BUCKET/${!varname} --file=$freq'_write.jpg'
             done
           
             echo "******"
