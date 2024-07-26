@@ -36,7 +36,7 @@ jobs:
       - name: build rw-heatmaps
         run: go build -C tools/rw-heatmaps
       - name: compare
-        run: ./tools/rw-heatmaps/rw-heatmaps $BASE.csv $PR.csv -t ' $BASE vs $PR' -o compare
+        run: ./tools/rw-heatmaps/rw-heatmaps $BASE.csv $PR.csv -t "$BASE vs $PR" -o compare
       - name: zip
         run: zip -r archive.zip *.csv *.jpg
       - name: write names to env
