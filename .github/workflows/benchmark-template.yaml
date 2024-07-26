@@ -22,17 +22,11 @@ jobs:
           repository: 'clement2026/etcd'
           ref: ${{ inputs.branch }}
           path: etcd
-      - name: ls
-        run:  ls
-      - name: ls ..
-        run:  ls ..
-      - name: show branch
-        run:  git --git-dir etcd branch
       - uses: actions/setup-go@v5
         with:
           go-version: '1.22'
       - name: Run script
-        run: chmod +x ../scripts/benchmark.sh && ../scripts/benchmark.sh
+        run: chmod +x ./scripts/benchmark.sh && ./scripts/benchmark.sh
       - name: Get result.csv
         id: run-benchmarks
         run: |
