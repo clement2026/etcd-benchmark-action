@@ -1,5 +1,5 @@
 ---
-name: Benchmarks on AMD64
+name: test
 permissions: read-all
 on: [ workflow_dispatch,push ]
 
