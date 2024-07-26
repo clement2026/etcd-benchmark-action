@@ -7,40 +7,40 @@ env:
   CSV_FILE_PREFIX: https://pub-95669c22c66d453c92c62f20aa0c5b57.r2.dev
   BUCKET: github-action
   BASE: main
-  FREQUENCIES: "frequency_1"
-#  FREQUENCIES: "frequency_1 frequency_10 frequency_100 frequency_1000"
+  #  FREQUENCIES: "frequency_1"
+  FREQUENCIES: "frequency_1 frequency_10 frequency_100 frequency_1000"
 #  PR: issue-17098-separate-raft-log-compact-from-snapshot
 
 jobs:
   benchmark-base:
     uses: ./.github/workflows/benchmark-template.yaml
     with:
-      runs-on: self-hosted
+      runs-on: ubuntu-latest
       branch: main
   frequency_1:
     uses: ./.github/workflows/benchmark-template.yaml
     with:
-      runs-on: self-hosted
+      runs-on: ubuntu-latest
       branch: frequency_1
-#  frequency_10:
-#    uses: ./.github/workflows/benchmark-template.yaml
-#    with:
-#      runs-on: self-hosted
-#      branch: frequency_10
-#  frequency_100:
-#    uses: ./.github/workflows/benchmark-template.yaml
-#    with:
-#      runs-on: self-hosted
-#      branch: frequency_100
-#  frequency_1000:
-#    uses: ./.github/workflows/benchmark-template.yaml
-#    with:
-#      runs-on: self-hosted
-#      branch: frequency_1000
+  frequency_10:
+    uses: ./.github/workflows/benchmark-template.yaml
+    with:
+      runs-on: ubuntu-latest
+      branch: frequency_10
+  frequency_100:
+    uses: ./.github/workflows/benchmark-template.yaml
+    with:
+      runs-on: ubuntu-latest
+      branch: frequency_100
+  frequency_1000:
+    uses: ./.github/workflows/benchmark-template.yaml
+    with:
+      runs-on: ubuntu-latest
+      branch: frequency_1000
 
   compare1-1000:
-    needs: [ benchmark-base,frequency_1 ]
-    runs-on: self-hosted
+    needs: [ benchmark-base, frequency_1, frequency_10, frequency_100, frequency_1000 ]
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/checkout@v4
@@ -56,9 +56,9 @@ jobs:
           echo "${{ needs.benchmark-base.outputs.results }}" |  base64 -d > $BASE.csv
           
           echo "${{ needs.frequency_1.outputs.results }}" |  base64 -d > frequency_1.csv
-#          echo "${{ needs.frequency_10.outputs.results }}" |  base64 -d > frequency_10.csv
-#          echo "${{ needs.frequency_100.outputs.results }}" |  base64 -d > frequency_100.csv
-#          echo "${{ needs.frequency_1000.outputs.results }}" |  base64 -d > frequency_1000.csv
+          echo "${{ needs.frequency_10.outputs.results }}" |  base64 -d > frequency_10.csv
+          echo "${{ needs.frequency_100.outputs.results }}" |  base64 -d > frequency_100.csv
+          echo "${{ needs.frequency_1000.outputs.results }}" |  base64 -d > frequency_1000.csv
       - name: build rw-heatmaps
         run: go build -C etcd/tools/rw-heatmaps
       - name: compare
@@ -98,29 +98,11 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run : |
+        run: |
           npx wrangler r2 object put $BUCKET/$ZIP_OBJECT_NAME --file=archive.zip
-          npx wrangler r2 object put $BUCKET/$COMPARE_READ_OBJECT_NAME_frequency_1 --file=frequency_1'_read.jpg'
           for freq in $FREQUENCIES; do 
             varname=COMPARE_READ_OBJECT_NAME_$freq
             npx wrangler r2 object put $BUCKET/${!varname} --file=$freq'_read.jpg'
             varname=COMPARE_WRITE_OBJECT_NAM_$freq
             npx wrangler r2 object put $BUCKET/${!varname} --file=$freq'_write.jpg'
           done
-#      - name: Upload to R2
-#        uses: cloudflare/wrangler-action@v3
-#        with:
-#          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-#          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-#          command: --version
-#          postCommands: |
-#            echo "*** post commands ***"
-#            wrangler r2 object put $BUCKET/$ZIP_OBJECT_NAME --file=archive.zip
-#            wrangler r2 object put $BUCKET/$COMPARE_READ_OBJECT_NAME_frequency_1 --file=frequency_1'_read.jpg'
-#            for freq in $FREQUENCIES; do
-#              varname=COMPARE_READ_OBJECT_NAME_$freq
-#              wrangler r2 object put $BUCKET/${!varname} --file=$freq'_read.jpg'
-#              varname=COMPARE_WRITE_OBJECT_NAM_$freq
-#              wrangler r2 object put $BUCKET/${!varname} --file=$freq'_write.jpg'
-#            done
-#            echo "******"
