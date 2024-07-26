@@ -13,11 +13,11 @@ jobs:
   benchmark-base:
     uses: ./.github/workflows/benchmark-template.yaml
     with:
-      branch: ${{ env.BASE }}
+      branch: $BASE
   benchmark-pr:
     uses: ./.github/workflows/benchmark-template.yaml
     with:
-      branch: ${{ env.PR }}
+      branch: $PR
 
   benchmark:
     needs: [ benchmark-base,benchmark-pr ]
