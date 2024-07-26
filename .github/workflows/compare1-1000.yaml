@@ -86,9 +86,9 @@ jobs:
           for freq in $FREQUENCIES; do
             echo "### $freq" >> "$GITHUB_STEP_SUMMARY"
             varname=COMPARE_READ_OBJECT_NAME_$freq
-            echo "![]($CSV_FILE_PREFIX/$varname)" >> "$GITHUB_STEP_SUMMARY"
+            echo "![]($CSV_FILE_PREFIX/${!varname})" >> "$GITHUB_STEP_SUMMARY"
             varname=COMPARE_WRITE_OBJECT_NAM_$freq
-            echo "![]($CSV_FILE_PREFIX/$varname)" >> "$GITHUB_STEP_SUMMARY"
+            echo "![]($CSV_FILE_PREFIX/${!varname})" >> "$GITHUB_STEP_SUMMARY"
           done
           cat <<EOL >> "$GITHUB_STEP_SUMMARY"
           EOL
@@ -104,9 +104,9 @@ jobs:
 
             for freq in $FREQUENCIES; do
               varname=COMPARE_READ_OBJECT_NAME_$freq
-              wrangler r2 object put $BUCKET/$varname --file=$freq-read.jpg
+              wrangler r2 object put $BUCKET/${!varname} --file=$freq-read.jpg
               varname=COMPARE_WRITE_OBJECT_NAM_$freq
-              wrangler r2 object put $BUCKET/$varname --file=$freq-write.jpg
+              wrangler r2 object put $BUCKET/${!varname} --file=$freq-write.jpg
             done
           
             echo "******"
