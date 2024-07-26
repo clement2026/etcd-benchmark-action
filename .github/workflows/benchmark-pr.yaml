@@ -27,8 +27,8 @@ jobs:
       - run: |
           echo "\`\`\`" >> "$GITHUB_STEP_SUMMARY"
           cat $RESULT_FILE >> "$GITHUB_STEP_SUMMARY"
-          echo "[file.csv]($CSV_FILE_PREFIX/$OBJECT_NAME)" >> "$GITHUB_STEP_SUMMARY"
           echo "\`\`\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "[file.csv]($CSV_FILE_PREFIX/$OBJECT_NAME)" >> "$GITHUB_STEP_SUMMARY"
           cat <<EOL >> "$GITHUB_STEP_SUMMARY"
           <hr />
           The table shows the median and 90% confidence interval (CI) summaries for each benchmark comparing the HEAD and the BASE of the pull request, and an A/B comparison under "vs base". The last column shows the statistical p-value with ten runs (n=10).
