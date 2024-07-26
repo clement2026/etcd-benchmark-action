@@ -92,15 +92,35 @@ jobs:
           done
           cat <<EOL >> "$GITHUB_STEP_SUMMARY"
           EOL
-      - name: Upload to R2
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: --version
-          postCommands: |
-            echo "*** post commands ***"
-            wrangler r2 object put $BUCKET/$ZIP_OBJECT_NAME --file=archive.zip
-            wrangler r2 object put $BUCKET/$COMPARE_READ_OBJECT_NAME_frequency_1 --file=frequency_1'_read.jpg'
-            for freq in $FREQUENCIES; do               varname=COMPARE_READ_OBJECT_NAME_$freq;              wrangler r2 object put $BUCKET/${!varname} --file=$freq'_read.jpg';               varname=COMPARE_WRITE_OBJECT_NAM_$freq;               wrangler r2 object put $BUCKET/${!varname} --file=$freq'_write.jpg';         done
-            echo "******"
+      - name: install wrangler
+        run: npm install wrangler
+      - name: upload to r2
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run : |
+          npx wrangler r2 object put $BUCKET/$ZIP_OBJECT_NAME --file=archive.zip
+          npx wrangler r2 object put $BUCKET/$COMPARE_READ_OBJECT_NAME_frequency_1 --file=frequency_1'_read.jpg'
+          for freq in $FREQUENCIES; do 
+            varname=COMPARE_READ_OBJECT_NAME_$freq
+            npx wrangler r2 object put $BUCKET/${!varname} --file=$freq'_read.jpg'
+            varname=COMPARE_WRITE_OBJECT_NAM_$freq
+            npx wrangler r2 object put $BUCKET/${!varname} --file=$freq'_write.jpg'
+          done
+#      - name: Upload to R2
+#        uses: cloudflare/wrangler-action@v3
+#        with:
+#          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+#          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+#          command: --version
+#          postCommands: |
+#            echo "*** post commands ***"
+#            wrangler r2 object put $BUCKET/$ZIP_OBJECT_NAME --file=archive.zip
+#            wrangler r2 object put $BUCKET/$COMPARE_READ_OBJECT_NAME_frequency_1 --file=frequency_1'_read.jpg'
+#            for freq in $FREQUENCIES; do
+#              varname=COMPARE_READ_OBJECT_NAME_$freq
+#              wrangler r2 object put $BUCKET/${!varname} --file=$freq'_read.jpg'
+#              varname=COMPARE_WRITE_OBJECT_NAM_$freq
+#              wrangler r2 object put $BUCKET/${!varname} --file=$freq'_write.jpg'
+#            done
+#            echo "******"
