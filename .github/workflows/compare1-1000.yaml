@@ -17,29 +17,29 @@ jobs:
     with:
       runs-on: self-hosted
       branch: main
-  frequency-1:
+  frequency_1:
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: self-hosted
       branch: frequency_1
-#  frequency-10:
+#  frequency_10:
 #    uses: ./.github/workflows/benchmark-template.yaml
 #    with:
 #      runs-on: self-hosted
-#      branch: frequency-10
-#  frequency-100:
+#      branch: frequency_10
+#  frequency_100:
 #    uses: ./.github/workflows/benchmark-template.yaml
 #    with:
 #      runs-on: self-hosted
-#      branch: frequency-100
-#  frequency-1000:
+#      branch: frequency_100
+#  frequency_1000:
 #    uses: ./.github/workflows/benchmark-template.yaml
 #    with:
 #      runs-on: self-hosted
-#      branch: frequency-1000
+#      branch: frequency_1000
 
   compare1-1000:
-    needs: [ benchmark-base,frequency-1 ]
+    needs: [ benchmark-base,frequency_1 ]
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
@@ -55,10 +55,10 @@ jobs:
         run: |
           echo "${{ needs.benchmark-base.outputs.results }}" |  base64 -d > $BASE.csv
           
-          echo "${{ needs.frequency-1.outputs.results }}" |  base64 -d > $frequency_1.csv
-#          echo "${{ needs.frequency-10.outputs.results }}" |  base64 -d > $frequency_10.csv
-#          echo "${{ needs.frequency-100.outputs.results }}" |  base64 -d > $frequency_100.csv
-#          echo "${{ needs.frequency-1000.outputs.results }}" |  base64 -d > $frequency_1000.csv
+          echo "${{ needs.frequency_1.outputs.results }}" |  base64 -d > frequency_1.csv
+#          echo "${{ needs.frequency_10.outputs.results }}" |  base64 -d > frequency_10.csv
+#          echo "${{ needs.frequency_100.outputs.results }}" |  base64 -d > frequency_100.csv
+#          echo "${{ needs.frequency_1000.outputs.results }}" |  base64 -d > frequency_1000.csv
       - name: build rw-heatmaps
         run: go build -C etcd/tools/rw-heatmaps
       - name: compare
