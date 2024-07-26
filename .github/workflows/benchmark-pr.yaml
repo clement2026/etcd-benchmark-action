@@ -16,6 +16,8 @@ jobs:
         run: echo "RESULT_FILE=$(ls etcd/tools/rw-heatmaps/*.csv | head -n 1)" >> $GITHUB_ENV
       - name: ls 2
         run: ls etcd etcd/tools/rw-heatmaps
+      - name: cpu mem
+        run: lscpu; free -h
       - run: |
           echo "\`\`\`" >> "$GITHUB_STEP_SUMMARY"
           cat $RESULT_FILE >> "$GITHUB_STEP_SUMMARY"
