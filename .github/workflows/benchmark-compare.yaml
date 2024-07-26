@@ -13,13 +13,13 @@ jobs:
   benchmark-base:
     uses: ./.github/workflows/benchmark-template.yaml
     with:
-      branch: $BASE
+      branch: main
   benchmark-pr:
     uses: ./.github/workflows/benchmark-template.yaml
     with:
-      branch: $PR
+      branch: issue-17098-separate-raft-log-compact-from-snapshot
 
-  benchmark:
+  benchmark-compare:
     needs: [ benchmark-base,benchmark-pr ]
     runs-on: ubuntu-latest
     steps:
