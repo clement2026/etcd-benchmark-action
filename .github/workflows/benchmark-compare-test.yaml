@@ -1,5 +1,5 @@
 ---
-name: test
+name: simulate
 permissions: read-all
 on: [ workflow_dispatch,push ]
 
@@ -11,15 +11,18 @@ env:
 
 jobs:
 
-  benchmark-compare-test:
+  compare:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           repository: 'clement2026/etcd'
+          path: etcd
       - uses: actions/setup-go@v5
         with:
           go-version: '1.22'
+          cache-dependency-path: etcd/go.sum
       - name: Load Results
         run: |
           echo 'type,ratio,conn_size,value_size,iter1,iter2,iter3,comment
@@ -29,9 +32,9 @@ jobs:
           PARAM,,,,,,,"key_size=256,key_space_size=65536,backend_size=21474836480,range_limit=100,commit=c9fdc60"
           DATA,4.0000,32,256,1293.1367:326.8060,1285.4174:322.8009,1293.1635:321.3521,' > $PR.csv
       - name: build rw-heatmaps
-        run: go build -C tools/rw-heatmaps
+        run: go build -C etcd/tools/rw-heatmaps
       - name: compare
-        run: ./tools/rw-heatmaps/rw-heatmaps $BASE.csv $PR.csv -t ' $BASE vs $PR' -o compare
+        run: ./etcd/tools/rw-heatmaps/rw-heatmaps $BASE.csv $PR.csv -t ' $BASE vs $PR' -o compare
       - name: ls
         run: ls
       - name: zip
