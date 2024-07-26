@@ -5,7 +5,7 @@ on: [ workflow_dispatch ]
 
 env:
   CSV_FILE_PREFIX: https://pub-95669c22c66d453c92c62f20aa0c5b57.r2.dev
-  BUCKET: self-hosted
+  BUCKET: github-action
   BASE: main
   PR: issue-17098-separate-raft-log-compact-from-snapshot
 
@@ -21,7 +21,7 @@ jobs:
 
   compare-on-same-machine:
     needs: [ benchmark-base,benchmark-pr ]
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
       - uses: actions/checkout@v4
