@@ -37,7 +37,7 @@ jobs:
         with:
           go-version: '1.22'
       - name: Run script
-        run: chmod +x ./scripts/benchmark.sh && ./scripts/benchmark.sh
+        run: chmod +x ./etcd-benchmark-action/scripts/benchmark.sh && ./etcd-benchmark-action/scripts/benchmark.sh
       - name: Get result.csv
         id: run-benchmarks
         run: |
