@@ -17,12 +17,11 @@ jobs:
     outputs:
       results: ${{ steps.run-benchmarks.outputs.results }}
     steps:
-      - name: mkdir
-        run:  mkdir etcd && cd etcd
       - uses: actions/checkout@v4
         with:
           repository: 'clement2026/etcd'
           ref: ${{ inputs.branch }}
+          path: etcd
       - name: show branch
         run:  git branch
       - name: ls
