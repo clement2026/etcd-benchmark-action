@@ -12,13 +12,13 @@ jobs:
           go-version: '1.22'
       - name: Run script
         run: chmod +x ./scripts/benchmark.sh && ./scripts/benchmark.sh
-      - name: ls
-        run: ls
+      - name: Get result.csv
+        run: echo "RESULT_FILE=$(ls etcd/tools/rw-heatmaps/*.csv | head -n 1)" >> $GITHUB_ENV
       - name: ls 2
         run: ls etcd etcd/tools/rw-heatmaps
       - run: |
           echo "\`\`\`" >> "$GITHUB_STEP_SUMMARY"
-          cat etcd/tools/rw-heatmaps/result.csv >> "$GITHUB_STEP_SUMMARY"
+          cat $RESULT_FILE >> "$GITHUB_STEP_SUMMARY"
           echo "\`\`\`" >> "$GITHUB_STEP_SUMMARY"
           cat <<EOL >> "$GITHUB_STEP_SUMMARY"
           <hr />
