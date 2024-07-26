@@ -1,4 +1,4 @@
-git clone https://github.com/clement2026/etcd.git etcd --single-branch --branch main
+#git clone https://github.com/clement2026/etcd.git etcd --single-branch --branch main
 
 cd ./etcd && make build tools && chmod -R u+x ./
 
