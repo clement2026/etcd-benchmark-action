@@ -21,7 +21,7 @@ jobs:
 
   compare-on-same-machine:
     needs: [ benchmark-base,benchmark-pr ]
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/checkout@v4
