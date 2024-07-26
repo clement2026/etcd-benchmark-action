@@ -77,8 +77,8 @@ jobs:
           echo "ZIP_OBJECT_NAME=etcd-benchmark-$DATE.zip" >> $GITHUB_ENV
           
           for freq in $FREQUENCIES; do
-            echo "COMPARE_READ_OBJECT_NAME_$freq=etcd-benchmark-$DATE-$freq_read.jpg" >> $GITHUB_ENV
-            echo "COMPARE_WRITE_OBJECT_NAM_$freq=etcd-benchmark-$DATE-$freq_write.jpg" >> $GITHUB_ENV
+            echo "COMPARE_READ_OBJECT_NAME_$freq=etcd-benchmark-$DATE-$freq-read.jpg" >> $GITHUB_ENV
+            echo "COMPARE_WRITE_OBJECT_NAM_$freq=etcd-benchmark-$DATE-$freq-write.jpg" >> $GITHUB_ENV
           done
       - name: print md
         run: |
@@ -104,9 +104,9 @@ jobs:
 
             for freq in $FREQUENCIES; do
               varname=COMPARE_READ_OBJECT_NAME_$freq
-              wrangler r2 object put $BUCKET/$varname --file=$freq_read.jpg
+              wrangler r2 object put $BUCKET/$varname --file=$freq-read.jpg
               varname=COMPARE_WRITE_OBJECT_NAM_$freq
-              wrangler r2 object put $BUCKET/$varname --file=$freq_write.jpg
+              wrangler r2 object put $BUCKET/$varname --file=$freq-write.jpg
             done
           
             echo "******"
