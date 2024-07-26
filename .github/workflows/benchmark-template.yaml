@@ -22,12 +22,12 @@ jobs:
           repository: 'clement2026/etcd'
           ref: ${{ inputs.branch }}
           path: etcd
-      - name: show branch
-        run:  git --git-dir etcd branch
       - name: ls
         run:  ls
       - name: ls ..
         run:  ls ..
+      - name: show branch
+        run:  git --git-dir etcd branch
       - uses: actions/setup-go@v5
         with:
           go-version: '1.22'
