@@ -3,13 +3,17 @@ name: Benchmarks on AMD64
 permissions: read-all
 on: [ workflow_dispatch,push ]
 jobs:
-  benchmark-main:
+  benchmark-base:
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       branch: main
+  benchmark-pr:
+    uses: ./.github/workflows/benchmark-template.yaml
+    with:
+      branch: issue-17098-separate-raft-log-compact-from-snapshot
 
   benchmark:
-    needs: [benchmark-main]
+    needs: [ benchmark-base,benchmark-pr ]
     runs-on: ubuntu-latest
     env:
       CSV_FILE_PREFIX: https://pub-95669c22c66d453c92c62f20aa0c5b57.r2.dev
@@ -17,7 +21,7 @@ jobs:
     steps:
       - name: Load Results
         run: |
-          echo "${{ needs.benchmark-base.outputs.results }}" | base64 -d | grep ^Benchmark > base.txt
+          echo "${{ needs.benchmark-base.outputs.results }}" | base64 -d > base.txt
 #      - uses: actions/checkout@v4
 #      - uses: actions/setup-go@v5
 #        with:
