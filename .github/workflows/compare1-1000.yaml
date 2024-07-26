@@ -39,7 +39,7 @@ jobs:
 #      branch: frequency-1000
 
   compare1-1000:
-    needs: [ benchmark-base,benchmark-pr ]
+    needs: [ benchmark-base,frequency-1 ]
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
