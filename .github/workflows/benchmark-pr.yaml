@@ -1,7 +1,7 @@
 ---
 name: Benchmarks on AMD64
 permissions: read-all
-on: [ push, workflow_dispatch ]
+on: [ workflow_dispatch ]
 jobs:
   benchmark:
     runs-on: ubuntu-latest
@@ -14,8 +14,6 @@ jobs:
         run: chmod +x ./scripts/benchmark.sh && ./scripts/benchmark.sh
       - name: Get result.csv
         run: echo "RESULT_FILE=$(ls etcd/tools/rw-heatmaps/*.csv | head -n 1)" >> $GITHUB_ENV
-      - name: ls 2
-        run: ls etcd etcd/tools/rw-heatmaps
       - name: cpu mem
         run: lscpu; free -h
       - run: |
@@ -28,3 +26,13 @@ jobs:
           The last row has the Geometric Mean (geomean) for the given rows in the table.
           Refer to [benchstat's documentation](https://pkg.go.dev/golang.org/x/perf/cmd/benchstat) for more help.
           EOL
+      - name: Upload to R2
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          #          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          #          ommand:  r2 object put github-action/etcd-result-$(date '+%Y%m%d%H%M')-.csv --file=dataset.csv
+          postCommands: |
+            echo "*** post commands ***"
+            wrangler r2 object put github-action/etcd-result-$(date '+%Y%m%d%H%M')-.csv --file=$RESULT_FILE
+            echo "******"
