@@ -22,7 +22,11 @@ jobs:
           repository: 'clement2026/etcd'
           ref: ${{ inputs.branch }}
       - name: ls
-        run: ls; ls ..; git branch
+        run:  ls
+      - name: ls ..
+        run:  ls ..
+      - name: show branch
+        run:  git branch
       - name: cd
         run: cd $GITHUB_WORKSPACE
       - uses: actions/setup-go@v5
