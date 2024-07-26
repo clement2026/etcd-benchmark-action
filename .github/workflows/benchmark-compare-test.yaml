@@ -32,6 +32,8 @@ jobs:
         run: go build -C tools/rw-heatmaps
       - name: compare
         run: ./tools/rw-heatmaps/rw-heatmaps $BASE.csv $PR.csv -t ' $BASE vs $PR' -o compare
+      - name: ls
+        run: ls
       - name: Get result.csv
         run: |
           DATE=$(date '+%Y%m%d-%H-%M-%S')
