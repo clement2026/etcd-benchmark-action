@@ -23,7 +23,7 @@ jobs:
           ref: ${{ inputs.branch }}
           path: etcd
       - name: show branch
-        run:  git branch
+        run:  git --git-dir etcd branch
       - name: ls
         run:  ls
       - name: ls ..
