@@ -24,29 +24,34 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           repository: 'clement2026/etcd'
+          path: etcd
       - uses: actions/setup-go@v5
         with:
           go-version: '1.22'
+          cache-dependency-path: etcd/go.sum
       - name: Load Results
         run: |
           echo "${{ needs.benchmark-base.outputs.results }}" |  base64 -d > $BASE.csv
           echo "${{ needs.benchmark-pr.outputs.results }}" |  base64 -d > $PR.csv
       - name: build rw-heatmaps
-        run: go build -C tools/rw-heatmaps
+        run: go build -C etcd/tools/rw-heatmaps
       - name: compare
         run: ./tools/rw-heatmaps/rw-heatmaps $BASE.csv $PR.csv -t "$BASE vs $PR" -o compare
+      - name: ls
+        run: ls
       - name: zip
-        run: zip -r archive.zip *.csv *.jpg
+        run: zip -r archive.zip *.csv *.jpg ./scripts/*.sh
       - name: write names to env
         run: |
           DATE=$(date '+%Y%m%d-%H-%M-%S')
           
           BASE_CSV_OBJECT_NAME="etcd-benchmark-$DATE-$BASE.csv"
           PR_CSV_OBJECT_NAME="etcd-benchmark-$DATE-$PR.csv"
-          COMPARE_READ_OBJECT_NAME="etcd-benchmark-$DATE_compare_read.jpg"
-          COMPARE_WRITE_OBJECT_NAME="etcd-benchmark-$DATE_compare_write.jpg"
+          COMPARE_READ_OBJECT_NAME="etcd-benchmark-$DATE-compare_read.jpg"
+          COMPARE_WRITE_OBJECT_NAME="etcd-benchmark-$DATE-compare_write.jpg"
           ZIP_OBJECT_NAME="etcd-benchmark-$DATE.zip"
           echo "BASE_CSV_OBJECT_NAME=$BASE_CSV_OBJECT_NAME" >> $GITHUB_ENV
           echo "PR_CSV_OBJECT_NAME=$PR_CSV_OBJECT_NAME" >> $GITHUB_ENV
@@ -57,8 +62,8 @@ jobs:
       #        run: lscpu; free -h
       - name: print md
         run: |
-          echo -n "[archive.zip]($CSV_FILE_PREFIX/$ZIP_OBJECT_NAME)   " >> "$GITHUB_STEP_SUMMARY"
-          echo -n "[$BASE.csv]($CSV_FILE_PREFIX/$BASE_CSV_OBJECT_NAME)   " >> "$GITHUB_STEP_SUMMARY"
+          echo "[archive.zip]($CSV_FILE_PREFIX/$ZIP_OBJECT_NAME)" >> "$GITHUB_STEP_SUMMARY"
+          echo "[$BASE.csv]($CSV_FILE_PREFIX/$BASE_CSV_OBJECT_NAME)" >> "$GITHUB_STEP_SUMMARY"
           echo "[$PR.csv]($CSV_FILE_PREFIX/$PR_CSV_OBJECT_NAME)" >> "$GITHUB_STEP_SUMMARY"
           echo "![]($CSV_FILE_PREFIX/$COMPARE_READ_OBJECT_NAME)" >> "$GITHUB_STEP_SUMMARY"
           echo "![]($CSV_FILE_PREFIX/$COMPARE_WRITE_OBJECT_NAME)" >> "$GITHUB_STEP_SUMMARY"

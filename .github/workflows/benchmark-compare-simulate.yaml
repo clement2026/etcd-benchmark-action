@@ -34,7 +34,7 @@ jobs:
       - name: build rw-heatmaps
         run: go build -C etcd/tools/rw-heatmaps
       - name: compare
-        run: ./etcd/tools/rw-heatmaps/rw-heatmaps $BASE.csv $PR.csv -t ' $BASE vs $PR' -o compare
+        run: ./tools/rw-heatmaps/rw-heatmaps $BASE.csv $PR.csv -t "$BASE vs $PR" -o compare
       - name: ls
         run: ls
       - name: zip
@@ -45,8 +45,8 @@ jobs:
           
           BASE_CSV_OBJECT_NAME="etcd-benchmark-$DATE-$BASE.csv"
           PR_CSV_OBJECT_NAME="etcd-benchmark-$DATE-$PR.csv"
-          COMPARE_READ_OBJECT_NAME="etcd-benchmark-$DATE_compare_read.jpg"
-          COMPARE_WRITE_OBJECT_NAME="etcd-benchmark-$DATE_compare_write.jpg"
+          COMPARE_READ_OBJECT_NAME="etcd-benchmark-$DATE-compare_read.jpg"
+          COMPARE_WRITE_OBJECT_NAME="etcd-benchmark-$DATE-compare_write.jpg"
           ZIP_OBJECT_NAME="etcd-benchmark-$DATE.zip"
           echo "BASE_CSV_OBJECT_NAME=$BASE_CSV_OBJECT_NAME" >> $GITHUB_ENV
           echo "PR_CSV_OBJECT_NAME=$PR_CSV_OBJECT_NAME" >> $GITHUB_ENV
