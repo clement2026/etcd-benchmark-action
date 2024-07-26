@@ -1,7 +1,7 @@
 ---
 name: Benchmarks on AMD64
 permissions: read-all
-on: [ workflow_dispatch ]
+on: [ workflow_dispatch,push ]
 jobs:
   benchmark:
     runs-on: ubuntu-latest
