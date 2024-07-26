@@ -14,7 +14,7 @@ jobs:
         with:
           go-version: '1.22'
       - name: Run script
-        run: echo 'xx' > b.csv
+        run: echo $(uuidgen) > b.csv
 #        run: chmod +x ./scripts/benchmark.sh && ./scripts/benchmark.sh
       - name: Get result.csv
         run: |
@@ -27,7 +27,7 @@ jobs:
       - run: |
           echo "\`\`\`" >> "$GITHUB_STEP_SUMMARY"
           cat $RESULT_FILE >> "$GITHUB_STEP_SUMMARY"
-          echo "[file]($CSV_FILE_PREFIX/$OBJECT_NAME)" >> "$GITHUB_STEP_SUMMARY"
+          echo "[file.csv]($CSV_FILE_PREFIX/$OBJECT_NAME)" >> "$GITHUB_STEP_SUMMARY"
           echo "\`\`\`" >> "$GITHUB_STEP_SUMMARY"
           cat <<EOL >> "$GITHUB_STEP_SUMMARY"
           <hr />
