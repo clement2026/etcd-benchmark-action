@@ -6,7 +6,8 @@ jobs:
   benchmark:
     runs-on: ubuntu-latest
     env:
-      CSV_FILE_PREFIX: https://pub-95669c22c66d453c92c62f20aa0c5b57.r2.dev/
+      CSV_FILE_PREFIX: https://pub-95669c22c66d453c92c62f20aa0c5b57.r2.dev
+      BUCKET: github-action
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -18,15 +19,15 @@ jobs:
       - name: Get result.csv
         run: |
           RESULT_FILE=b.csv
-          UPLOAD_FILE="github-action/etcd-result-$(date '+%Y%m%d%H%M')-main-$(uuidgen).csv"
+          OBJECT_NAME="etcd-result-$(date '+%Y%m%d%H%M')-main-$(uuidgen).csv"
           echo "RESULT_FILE=$RESULT_FILE" >> $GITHUB_ENV
-          echo "UPLOAD_FILE=$UPLOAD_FILE" >> $GITHUB_ENV
+          echo "OBJECT_NAME=$OBJECT_NAME" >> $GITHUB_ENV
       - name: cpu mem
         run: lscpu; free -h
       - run: |
           echo "\`\`\`" >> "$GITHUB_STEP_SUMMARY"
           cat $RESULT_FILE >> "$GITHUB_STEP_SUMMARY"
-          echo "[file]($CSV_FILE_PREFIX/$UPLOAD_FILE)" >> "$GITHUB_STEP_SUMMARY"
+          echo "[file]($CSV_FILE_PREFIX/$OBJECT_NAME)" >> "$GITHUB_STEP_SUMMARY"
           echo "\`\`\`" >> "$GITHUB_STEP_SUMMARY"
           cat <<EOL >> "$GITHUB_STEP_SUMMARY"
           <hr />
@@ -42,5 +43,5 @@ jobs:
           command: --version
           postCommands: |
             echo "*** post commands ***"
-            wrangler r2 object put $UPLOAD_FILE --file=$RESULT_FILE
+            wrangler r2 object put $BUCKET/$OBJECT_NAME --file=$RESULT_FILE
             echo "******"
