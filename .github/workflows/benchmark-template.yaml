@@ -32,11 +32,14 @@ jobs:
       - name: ls
         run: pwd && ls
       - name: ls -lh
-        run: ls  -lh etcd/tools/rw-heatmaps/*.csv | head -n 1
-      - name: cat
+        run: ls -lh etcd/tools/rw-heatmaps/*.csv
+      - name: print md
         run: |
-         file=$(etcd/tools/rw-heatmaps/*.csv | head -n 1)
-         cat $file
+          file=$(ls etcd/tools/rw-heatmaps/*.csv | head -n 1)
+          cat $file
+          echo "\`\`\`csv" >> "$GITHUB_STEP_SUMMARY"
+          cat $file >> "$GITHUB_STEP_SUMMARY"
+          echo "\`\`\`" >> "$GITHUB_STEP_SUMMARY"
       - name: Get result.csv
         id: run-benchmarks
         run: |
