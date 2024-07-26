@@ -3,23 +3,22 @@ name: Benchmarks on AMD64
 permissions: read-all
 on: [ push, workflow_dispatch ]
 jobs:
-  benchmark-pull-request:
+  benchmark:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      #        with:
-      #          repository: 'clement2026/etcd'
-      #          fetch-depth: 0
       - uses: actions/setup-go@v5
         with:
           go-version: '1.22'
-      - name: chmod
-        run: chmod +x ./scripts/benchmark.sh
-      - name: Run Benchmarks
-        run: ./scripts/benchmark.sh
+      - name: Run script
+        run: chmod +x ./scripts/benchmark.sh && ./scripts/benchmark.sh
+      - name: ls
+        run: ls
+      - name: ls 2
+        run: ls etcd etcd/tools/rw-heatmaps
       - run: |
           echo "\`\`\`" >> "$GITHUB_STEP_SUMMARY"
-          cat result.csv >> "$GITHUB_STEP_SUMMARY"
+          cat etcd/tools/rw-heatmaps/result.csv >> "$GITHUB_STEP_SUMMARY"
           echo "\`\`\`" >> "$GITHUB_STEP_SUMMARY"
           cat <<EOL >> "$GITHUB_STEP_SUMMARY"
           <hr />
