@@ -34,7 +34,9 @@ jobs:
         run: ./tools/rw-heatmaps/rw-heatmaps $BASE.csv $PR.csv -t ' $BASE vs $PR' -o compare
       - name: ls
         run: ls
-      - name: Get result.csv
+      - name: zip
+        run: zip -r archive.zip *.csv *.jpg
+      - name: write names to env
         run: |
           DATE=$(date '+%Y%m%d-%H-%M-%S')
           
@@ -42,17 +44,19 @@ jobs:
           PR_CSV_OBJECT_NAME="etcd-benchmark-$DATE-$PR.csv"
           COMPARE_READ_OBJECT_NAME="etcd-benchmark-$DATE_compare_read.jpg"
           COMPARE_WRITE_OBJECT_NAME="etcd-benchmark-$DATE_compare_write.jpg"
+          ZIP_OBJECT_NAME="etcd-benchmark-$DATE.zip"
           echo "BASE_CSV_OBJECT_NAME=$BASE_CSV_OBJECT_NAME" >> $GITHUB_ENV
           echo "PR_CSV_OBJECT_NAME=$PR_CSV_OBJECT_NAME" >> $GITHUB_ENV
           echo "COMPARE_READ_OBJECT_NAME=$COMPARE_READ_OBJECT_NAME" >> $GITHUB_ENV
           echo "COMPARE_WRITE_OBJECT_NAME=$COMPARE_WRITE_OBJECT_NAME" >> $GITHUB_ENV
-#      - name: cpu mem
-#        run: lscpu; free -h
-      - run: |
-          echo -n "[$BASE.csv]($CSV_FILE_PREFIX/$BASE_CSV_OBJECT_NAME) " >> "$GITHUB_STEP_SUMMARY"
+          echo "ZIP_OBJECT_NAME=$ZIP_OBJECT_NAME" >> $GITHUB_ENV
+      #      - name: cpu mem
+      #        run: lscpu; free -h
+      - name: print md
+        run: |
+          echo -n "[archive.zip]($CSV_FILE_PREFIX/$ZIP_OBJECT_NAME)   " >> "$GITHUB_STEP_SUMMARY"
+          echo -n "[$BASE.csv]($CSV_FILE_PREFIX/$BASE_CSV_OBJECT_NAME)   " >> "$GITHUB_STEP_SUMMARY"
           echo "[$PR.csv]($CSV_FILE_PREFIX/$PR_CSV_OBJECT_NAME)" >> "$GITHUB_STEP_SUMMARY"
-          echo -n "<a href='"'$CSV_FILE_PREFIX/$BASE_CSV_OBJECT_NAME'"' download>$BASE.csv</a>" >> "$GITHUB_STEP_SUMMARY"
-          echo -n "<a href="$CSV_FILE_PREFIX/$PR_CSV_OBJECT_NAME" download>$PR.csv</a>" >> "$GITHUB_STEP_SUMMARY"
           echo "![]($CSV_FILE_PREFIX/$COMPARE_READ_OBJECT_NAME)" >> "$GITHUB_STEP_SUMMARY"
           echo "![]($CSV_FILE_PREFIX/$COMPARE_WRITE_OBJECT_NAME)" >> "$GITHUB_STEP_SUMMARY"
           cat <<EOL >> "$GITHUB_STEP_SUMMARY"
@@ -69,4 +73,5 @@ jobs:
             wrangler r2 object put $BUCKET/$PR_CSV_OBJECT_NAME --file=$PR.csv
             wrangler r2 object put $BUCKET/$COMPARE_READ_OBJECT_NAME --file=compare_read.jpg
             wrangler r2 object put $BUCKET/$COMPARE_WRITE_OBJECT_NAME --file=compare_write.jpg
+            wrangler r2 object put $BUCKET/$ZIP_OBJECT_NAME --file=archive.zip
             echo "******"

@@ -34,7 +34,7 @@ jobs:
       - name: ls -lh
         run: ls  -lh etcd/tools/rw-heatmaps/*.csv | head -n 1
       - name: cat
-        run: \
+        run: |
          file=$(etcd/tools/rw-heatmaps/*.csv | head -n 1)
          cat $file
       - name: Get result.csv
