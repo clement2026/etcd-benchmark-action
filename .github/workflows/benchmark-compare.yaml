@@ -2,59 +2,72 @@
 name: Benchmarks on AMD64
 permissions: read-all
 on: [ workflow_dispatch,push ]
+
+env:
+  CSV_FILE_PREFIX: https://pub-95669c22c66d453c92c62f20aa0c5b57.r2.dev
+  BUCKET: github-action
+  BASE: main
+  PR: issue-17098-separate-raft-log-compact-from-snapshot
+
 jobs:
   benchmark-base:
     uses: ./.github/workflows/benchmark-template.yaml
     with:
-      branch: main
+      branch: ${{ env.BASE }}
   benchmark-pr:
     uses: ./.github/workflows/benchmark-template.yaml
     with:
-      branch: issue-17098-separate-raft-log-compact-from-snapshot
+      branch: ${{ env.PR }}
 
   benchmark:
     needs: [ benchmark-base,benchmark-pr ]
     runs-on: ubuntu-latest
-    env:
-      CSV_FILE_PREFIX: https://pub-95669c22c66d453c92c62f20aa0c5b57.r2.dev
-      BUCKET: github-action
     steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: 'clement2026/etcd'
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
       - name: Load Results
         run: |
-          echo "${{ needs.benchmark-base.outputs.results }}" | base64 -d > base.txt
-#      - uses: actions/checkout@v4
-#      - uses: actions/setup-go@v5
-#        with:
-#          go-version: '1.22'
-#      - name: Run script
-##        run: echo $(uuidgen) > b.csv
-#        run: chmod +x ./scripts/benchmark.sh && ./scripts/benchmark.sh
-#      - name: Get result.csv
-#        run: |
-#          RESULT_FILE=$(ls etcd/tools/rw-heatmaps/*.csv | head -n 1)
-#          OBJECT_NAME="etcd-result-$(date '+%Y%m%d%H%M')-main-$(uuidgen).csv"
-#          echo "RESULT_FILE=$RESULT_FILE" >> $GITHUB_ENV
-#          echo "OBJECT_NAME=$OBJECT_NAME" >> $GITHUB_ENV
+          echo "${{ needs.benchmark-base.outputs.results }}" |  base64 -d > $BASE.csv
+          echo "${{ needs.benchmark-pr.outputs.results }}" |  base64 -d > $PR.csv
+      - name: build rw-heatmaps
+        run: go build -C tools/rw-heatmaps
+      - name: compare
+        run: ./tools/rw-heatmaps/rw-heatmaps $BASE.csv $PR.csv -t ' $BASE vs $PR' -o compare
+      - name: Get result.csv
+        run: |
+          DATE=$(date '+%Y%m%d-%H-%M-%S')
+          
+          BASE_CSV_OBJECT_NAME="etcd-benchmark-$DATE-$BASE.csv"
+          PR_CSV_OBJECT_NAME="etcd-benchmark-$DATE-$PR.csv"
+          COMPARE_READ_OBJECT_NAME="etcd-benchmark-$DATE_compare_read.png"
+          COMPARE_WRITE_OBJECT_NAME="etcd-benchmark-$DATE_compare_write.png"
+          echo "BASE_CSV_OBJECT_NAME=$BASE_CSV_OBJECT_NAME" >> $GITHUB_ENV
+          echo "PR_CSV_OBJECT_NAME=$PR_CSV_OBJECT_NAME" >> $GITHUB_ENV
+          echo "COMPARE_READ_OBJECT_NAME=$COMPARE_READ_OBJECT_NAME" >> $GITHUB_ENV
+          echo "COMPARE_WRITE_OBJECT_NAME=$COMPARE_WRITE_OBJECT_NAME" >> $GITHUB_ENV
 #      - name: cpu mem
 #        run: lscpu; free -h
-#      - run: |
-#          echo "\`\`\`" >> "$GITHUB_STEP_SUMMARY"
-#          cat $RESULT_FILE >> "$GITHUB_STEP_SUMMARY"
-#          echo "\`\`\`" >> "$GITHUB_STEP_SUMMARY"
-#          echo "[file.csv]($CSV_FILE_PREFIX/$OBJECT_NAME)" >> "$GITHUB_STEP_SUMMARY"
-#          cat <<EOL >> "$GITHUB_STEP_SUMMARY"
-#          <hr />
-#          The table shows the median and 90% confidence interval (CI) summaries for each benchmark comparing the HEAD and the BASE of the pull request, and an A/B comparison under "vs base". The last column shows the statistical p-value with ten runs (n=10).
-#          The last row has the Geometric Mean (geomean) for the given rows in the table.
-#          Refer to [benchstat's documentation](https://pkg.go.dev/golang.org/x/perf/cmd/benchstat) for more help.
-#          EOL
-#      - name: Upload to R2
-#        uses: cloudflare/wrangler-action@v3
-#        with:
-#          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-#          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-#          command: --version
-#          postCommands: |
-#            echo "*** post commands ***"
-#            wrangler r2 object put $BUCKET/$OBJECT_NAME --file=$RESULT_FILE
-#            echo "******"
+      - run: |
+          echo "[$BASE.csv]($CSV_FILE_PREFIX/$BASE_CSV_OBJECT_NAME)" >> "$GITHUB_STEP_SUMMARY"
+          echo "[$PR.csv]($CSV_FILE_PREFIX/$PR_CSV_OBJECT_NAME)" >> "$GITHUB_STEP_SUMMARY"
+          echo "![]($CSV_FILE_PREFIX/$COMPARE_READ_OBJECT_NAME)" >> "$GITHUB_STEP_SUMMARY"
+          echo "![]($CSV_FILE_PREFIX/$COMPARE_WRITE_OBJECT_NAME)" >> "$GITHUB_STEP_SUMMARY"
+          cat <<EOL >> "$GITHUB_STEP_SUMMARY"
+          EOL
+      - name: Upload to R2
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: --version
+          postCommands: |
+            echo "*** post commands ***"
+            wrangler r2 object put $BUCKET/$BASE_CSV_OBJECT_NAME --file=$BASE.csv
+            wrangler r2 object put $BUCKET/$PR_CSV_OBJECT_NAME --file=$PR.csv
+            wrangler r2 object put $BUCKET/$COMPARE_READ_OBJECT_NAME --file=compare_read.png
+            wrangler r2 object put $BUCKET/$COMPARE_WRITE_OBJECT_NAME --file=compare_write.png
+            echo "******"
