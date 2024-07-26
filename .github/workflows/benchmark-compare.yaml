@@ -1,5 +1,5 @@
 ---
-name: Benchmarks on AMD64
+name: compare
 permissions: read-all
 on: [ workflow_dispatch,push ]
 
@@ -19,7 +19,7 @@ jobs:
     with:
       branch: issue-17098-separate-raft-log-compact-from-snapshot
 
-  benchmark-compare:
+  compare:
     needs: [ benchmark-base,benchmark-pr ]
     runs-on: ubuntu-latest
     steps:

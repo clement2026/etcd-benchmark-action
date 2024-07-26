@@ -49,8 +49,10 @@ jobs:
 #      - name: cpu mem
 #        run: lscpu; free -h
       - run: |
-          echo "[$BASE.csv]($CSV_FILE_PREFIX/$BASE_CSV_OBJECT_NAME)" >> "$GITHUB_STEP_SUMMARY"
+          echo -n "[$BASE.csv]($CSV_FILE_PREFIX/$BASE_CSV_OBJECT_NAME) " >> "$GITHUB_STEP_SUMMARY"
           echo "[$PR.csv]($CSV_FILE_PREFIX/$PR_CSV_OBJECT_NAME)" >> "$GITHUB_STEP_SUMMARY"
+          echo -n "<a href="$CSV_FILE_PREFIX/$BASE_CSV_OBJECT_NAME" download>$BASE.csv</a>" >> "$GITHUB_STEP_SUMMARY"
+          echo -n "<a href="$CSV_FILE_PREFIX/$PR_CSV_OBJECT_NAME" download>$PR.csv</a>" >> "$GITHUB_STEP_SUMMARY"
           echo "![]($CSV_FILE_PREFIX/$COMPARE_READ_OBJECT_NAME)" >> "$GITHUB_STEP_SUMMARY"
           echo "![]($CSV_FILE_PREFIX/$COMPARE_WRITE_OBJECT_NAME)" >> "$GITHUB_STEP_SUMMARY"
           cat <<EOL >> "$GITHUB_STEP_SUMMARY"
