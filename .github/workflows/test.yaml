@@ -12,7 +12,7 @@ jobs:
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-#          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           #          command:  r2 object put github-action/etcd-result-$(date '+%Y%m%d%H%M')-.csv --file=dataset.csv
           command: version
           postCommands: |
