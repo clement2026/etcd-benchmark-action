@@ -21,7 +21,7 @@ jobs:
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: self-hosted
-      branch: frequency-1
+      branch: frequency_1
 #  frequency-10:
 #    uses: ./.github/workflows/benchmark-template.yaml
 #    with:
