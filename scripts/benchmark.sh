@@ -3,8 +3,8 @@
 cd ./etcd && make build tools && chmod -R u+x ./
 
 export RATIO_LIST="4/1"
-export REPEAT_COUNT=3
-export RUN_COUNT=50000
+export REPEAT_COUNT=1
+export RUN_COUNT=10000
 export VALUE_SIZE_POWER_RANGE="8 8"
 export CONN_CLI_COUNT_POWER_RANGE="5 6"
 

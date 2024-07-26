@@ -1,0 +1,112 @@
+---
+name: compare1-1000
+permissions: read-all
+on: [ workflow_dispatch ]
+
+env:
+  CSV_FILE_PREFIX: https://pub-95669c22c66d453c92c62f20aa0c5b57.r2.dev
+  BUCKET: github-action
+  BASE: main
+  FREQUENCIES: "frequency_1"
+#  FREQUENCIES: "frequency_1 frequency_10 frequency_100 frequency_1000"
+#  PR: issue-17098-separate-raft-log-compact-from-snapshot
+
+jobs:
+  benchmark-base:
+    uses: ./.github/workflows/benchmark-template.yaml
+    with:
+      runs-on: self-hosted
+      branch: main
+  frequency-1:
+    uses: ./.github/workflows/benchmark-template.yaml
+    with:
+      runs-on: self-hosted
+      branch: frequency-1
+#  frequency-10:
+#    uses: ./.github/workflows/benchmark-template.yaml
+#    with:
+#      runs-on: self-hosted
+#      branch: frequency-10
+#  frequency-100:
+#    uses: ./.github/workflows/benchmark-template.yaml
+#    with:
+#      runs-on: self-hosted
+#      branch: frequency-100
+#  frequency-1000:
+#    uses: ./.github/workflows/benchmark-template.yaml
+#    with:
+#      runs-on: self-hosted
+#      branch: frequency-1000
+
+  compare1-1000:
+    needs: [ benchmark-base,benchmark-pr ]
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: 'clement2026/etcd'
+          path: etcd
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+          cache-dependency-path: etcd/go.sum
+      - name: Load Results
+        run: |
+          echo "${{ needs.benchmark-base.outputs.results }}" |  base64 -d > $BASE.csv
+          
+          echo "${{ needs.frequency-1.outputs.results }}" |  base64 -d > $frequency_1.csv
+#          echo "${{ needs.frequency-10.outputs.results }}" |  base64 -d > $frequency_10.csv
+#          echo "${{ needs.frequency-100.outputs.results }}" |  base64 -d > $frequency_100.csv
+#          echo "${{ needs.frequency-1000.outputs.results }}" |  base64 -d > $frequency_1000.csv
+      - name: build rw-heatmaps
+        run: go build -C etcd/tools/rw-heatmaps
+      - name: compare
+        run: |
+          for freq in $FREQUENCIES; do
+            ./etcd/tools/rw-heatmaps/rw-heatmaps $BASE.csv $freq.csv -t "$BASE vs $freq" -o $freq
+          done
+      - name: ls
+        run: ls
+      - name: zip
+        run: zip -r archive.zip *.csv *.jpg ./scripts/*.sh
+      - name: write names to env
+        run: |
+          DATE=$(date '+%Y%m%d-%H-%M-%S')
+          
+          echo "ZIP_OBJECT_NAME=etcd-benchmark-$DATE.zip" >> $GITHUB_ENV
+          
+          for freq in $FREQUENCIES; do
+            echo "COMPARE_READ_OBJECT_NAME_$freq=etcd-benchmark-$DATE-$freq_compare_read.jpg" >> $GITHUB_ENV
+            echo "COMPARE_WRITE_OBJECT_NAM_$freq=etcd-benchmark-$DATE-$freq_compare_write.jpg" >> $GITHUB_ENV
+          done
+      - name: print md
+        run: |
+          echo "[archive.zip]($CSV_FILE_PREFIX/$ZIP_OBJECT_NAME)" >> "$GITHUB_STEP_SUMMARY"
+          for freq in $FREQUENCIES; do
+            echo "### $freq" >> "$GITHUB_STEP_SUMMARY"
+            varname=COMPARE_READ_OBJECT_NAME_$freq
+            echo "![]($CSV_FILE_PREFIX/$varname)" >> "$GITHUB_STEP_SUMMARY"
+            varname=COMPARE_WRITE_OBJECT_NAM_$freq
+            echo "![]($CSV_FILE_PREFIX/$varname)" >> "$GITHUB_STEP_SUMMARY"
+          done
+          cat <<EOL >> "$GITHUB_STEP_SUMMARY"
+          EOL
+      - name: Upload to R2
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: --version
+          postCommands: |
+            echo "*** post commands ***"
+            wrangler r2 object put $BUCKET/$ZIP_OBJECT_NAME --file=archive.zip
+
+            for freq in $FREQUENCIES; do
+              varname=COMPARE_READ_OBJECT_NAME_$freq
+              wrangler r2 object put $BUCKET/$varname --file=compare_read.jpg
+              varname=COMPARE_WRITE_OBJECT_NAM_$freq
+              wrangler r2 object put $BUCKET/$varname --file=compare_write.jpg
+            done
+          
+            echo "******"
