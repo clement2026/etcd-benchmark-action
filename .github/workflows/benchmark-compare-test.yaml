@@ -40,8 +40,8 @@ jobs:
           
           BASE_CSV_OBJECT_NAME="etcd-benchmark-$DATE-$BASE.csv"
           PR_CSV_OBJECT_NAME="etcd-benchmark-$DATE-$PR.csv"
-          COMPARE_READ_OBJECT_NAME="etcd-benchmark-$DATE_compare_read.png"
-          COMPARE_WRITE_OBJECT_NAME="etcd-benchmark-$DATE_compare_write.png"
+          COMPARE_READ_OBJECT_NAME="etcd-benchmark-$DATE_compare_read.jpg"
+          COMPARE_WRITE_OBJECT_NAME="etcd-benchmark-$DATE_compare_write.jpg"
           echo "BASE_CSV_OBJECT_NAME=$BASE_CSV_OBJECT_NAME" >> $GITHUB_ENV
           echo "PR_CSV_OBJECT_NAME=$PR_CSV_OBJECT_NAME" >> $GITHUB_ENV
           echo "COMPARE_READ_OBJECT_NAME=$COMPARE_READ_OBJECT_NAME" >> $GITHUB_ENV
@@ -65,6 +65,6 @@ jobs:
             echo "*** post commands ***"
             wrangler r2 object put $BUCKET/$BASE_CSV_OBJECT_NAME --file=$BASE.csv
             wrangler r2 object put $BUCKET/$PR_CSV_OBJECT_NAME --file=$PR.csv
-            wrangler r2 object put $BUCKET/$COMPARE_READ_OBJECT_NAME --file=compare_read.png
-            wrangler r2 object put $BUCKET/$COMPARE_WRITE_OBJECT_NAME --file=compare_write.png
+            wrangler r2 object put $BUCKET/$COMPARE_READ_OBJECT_NAME --file=compare_read.jpg
+            wrangler r2 object put $BUCKET/$COMPARE_WRITE_OBJECT_NAME --file=compare_write.jpg
             echo "******"
