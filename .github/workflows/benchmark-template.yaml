@@ -25,6 +25,8 @@ jobs:
           ref: ${{ inputs.branch }}
       - name: show branch
         run:  git branch
+      - name: ls
+        run:  ls
       - name: ls ..
         run:  ls ..
       - uses: actions/setup-go@v5
