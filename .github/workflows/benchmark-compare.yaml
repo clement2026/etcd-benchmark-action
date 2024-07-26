@@ -14,17 +14,17 @@ jobs:
   benchmark-base:
     uses: ./.github/workflows/benchmark-template.yaml
     with:
-      runs-on: ubuntu-latest
+      runs-on: self-hosted
       branch: main
   benchmark-pr:
     uses: ./.github/workflows/benchmark-template.yaml
     with:
-      runs-on: ubuntu-latest
-      branch: main2
+      runs-on: self-hosted
+      branch: main-2
 
   compare:
     needs: [ benchmark-base,benchmark-pr ]
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
       - uses: actions/checkout@v4
