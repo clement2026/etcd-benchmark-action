@@ -1,5 +1,5 @@
 ---
-name: compare
+name: compare-on-same-machine
 permissions: read-all
 on: [ workflow_dispatch ]
 
@@ -19,7 +19,7 @@ jobs:
     with:
       branch: issue-17098-separate-raft-log-compact-from-snapshot
 
-  compare:
+  compare-on-same-machine:
     needs: [ benchmark-base,benchmark-pr ]
     runs-on: ubuntu-latest
     steps:
@@ -39,7 +39,7 @@ jobs:
       - name: build rw-heatmaps
         run: go build -C etcd/tools/rw-heatmaps
       - name: compare
-        run: ./etcd/tools/rw-heatmaps/rw-heatmaps $BASE.csv $PR.csv -t "$BASE vs $PR" -o compare
+        run: ./tools/rw-heatmaps/rw-heatmaps $BASE.csv $PR.csv -t "$BASE vs $PR" -o compare
       - name: ls
         run: ls
       - name: zip
