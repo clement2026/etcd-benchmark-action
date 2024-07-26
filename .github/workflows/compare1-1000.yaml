@@ -102,7 +102,7 @@ jobs:
             echo "*** post commands ***"
             wrangler r2 object put $BUCKET/$ZIP_OBJECT_NAME --file=archive.zip
             wrangler r2 object put $BUCKET/$COMPARE_READ_OBJECT_NAME_frequency_1 --file=frequency_1'_read.jpg'
-            for freq in $FREQUENCIES; do
+            for freq in $FREQUENCIES; do \
               varname=COMPARE_READ_OBJECT_NAME_$freq
               wrangler r2 object put $BUCKET/${!varname} --file=$freq'_read.jpg'
               varname=COMPARE_WRITE_OBJECT_NAM_$freq
