@@ -12,10 +12,14 @@ jobs:
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          #          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          #          ommand:  r2 object put github-action/etcd-result-$(date '+%Y%m%d%H%M')-.csv --file=dataset.csv
-          command: whoami
+#          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          #          command:  r2 object put github-action/etcd-result-$(date '+%Y%m%d%H%M')-.csv --file=dataset.csv
+          command: version
           postCommands: |
             echo "*** post commands ***"
-            wrangler r2 object put github-action/etcd-result-$(date '+%Y%m%d%H%M')-main-$(uuidgen).csv --file=abc.csv
+            wrangler r2 object put github-action/etcd-result-abc.csv --file=abc.csv
             echo "******"
+#          postCommands: |
+#            echo "*** post commands ***"
+#            wrangler r2 object put github-action/etcd-result-$(date '+%Y%m%d%H%M')-main-$(uuidgen).csv --file=abc.csv
+#            echo "******"
