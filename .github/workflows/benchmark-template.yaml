@@ -31,6 +31,10 @@ jobs:
         run: chmod +x ./scripts/benchmark.sh && ./scripts/benchmark.sh
       - name: ls
         run: pwd && ls
+      - name: ls
+        run: ls etcd/tools/rw-heatmaps/*.csv | head -n 1
+      - name: cat
+        run: ls etcd/tools/rw-heatmaps/*.csv | head -n 1 | cat
       - name: Get result.csv
         id: run-benchmarks
         run: |
