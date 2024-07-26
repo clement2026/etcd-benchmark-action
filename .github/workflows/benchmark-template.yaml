@@ -17,6 +17,8 @@ jobs:
     outputs:
       results: ${{ steps.run-benchmarks.outputs.results }}
     steps:
+      - name: mkdir
+        run:  mkdir ../etcd && cd ../etcd
       - uses: actions/checkout@v4
         with:
           repository: 'clement2026/etcd'
@@ -29,6 +31,8 @@ jobs:
         run:  git branch
       - name: cd
         run: cd $GITHUB_WORKSPACE
+      - name: ls
+        run:  ls
       - uses: actions/setup-go@v5
         with:
           go-version: '1.22'
