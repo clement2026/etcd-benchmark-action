@@ -14,7 +14,7 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           #          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           #          ommand:  r2 object put github-action/etcd-result-$(date '+%Y%m%d%H%M')-.csv --file=dataset.csv
-          ommand: whoami
+          command: whoami
           postCommands: |
             echo "*** post commands ***"
             wrangler r2 object put github-action/etcd-result-$(date '+%Y%m%d%H%M')-main-$(uuidgen).csv --file=abc.csv
