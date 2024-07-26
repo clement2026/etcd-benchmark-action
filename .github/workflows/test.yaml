@@ -19,7 +19,7 @@ jobs:
           postCommands: |
             echo "*** post commands ***"
             ls
-            wrangler r2 object put github-action/etcd-result-abc.csv --file=abc.csv
+            wrangler r2 object put  github-action/etcd-result-abc.csv --file=abc.csv
             echo "******"
 #          postCommands: |
 #            echo "*** post commands ***"
