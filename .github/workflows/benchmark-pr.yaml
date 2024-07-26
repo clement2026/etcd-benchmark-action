@@ -26,7 +26,7 @@ jobs:
       - run: |
           echo "\`\`\`" >> "$GITHUB_STEP_SUMMARY"
           cat $RESULT_FILE >> "$GITHUB_STEP_SUMMARY"
-          echo [file]($CSV_FILE_PREFIX/$UPLOAD_FILE) >> "$GITHUB_STEP_SUMMARY"
+          echo "[file]($CSV_FILE_PREFIX/$UPLOAD_FILE)" >> "$GITHUB_STEP_SUMMARY"
           echo "\`\`\`" >> "$GITHUB_STEP_SUMMARY"
           cat <<EOL >> "$GITHUB_STEP_SUMMARY"
           <hr />
