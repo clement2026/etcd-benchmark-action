@@ -14,11 +14,11 @@ jobs:
         with:
           go-version: '1.22'
       - name: Run script
-        run: echo $(uuidgen) > b.csv
-#        run: chmod +x ./scripts/benchmark.sh && ./scripts/benchmark.sh
+#        run: echo $(uuidgen) > b.csv
+        run: chmod +x ./scripts/benchmark.sh && ./scripts/benchmark.sh
       - name: Get result.csv
         run: |
-          RESULT_FILE=b.csv
+          RESULT_FILE=$(ls etcd/tools/rw-heatmaps/*.csv | head -n 1)
           OBJECT_NAME="etcd-result-$(date '+%Y%m%d%H%M')-main-$(uuidgen).csv"
           echo "RESULT_FILE=$RESULT_FILE" >> $GITHUB_ENV
           echo "OBJECT_NAME=$OBJECT_NAME" >> $GITHUB_ENV
