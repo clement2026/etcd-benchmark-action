@@ -35,7 +35,7 @@ jobs:
       - name: ls
         run: ls
       - name: zip
-        run: zip -r archive.zip *.csv *.jpg
+        run: zip -r archive.zip *.csv *.jpg ./scripts/*.sh
       - name: write names to env
         run: |
           DATE=$(date '+%Y%m%d-%H-%M-%S')

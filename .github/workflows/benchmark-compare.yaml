@@ -1,7 +1,7 @@
 ---
 name: compare
 permissions: read-all
-on: [ workflow_dispatch,push ]
+on: [ workflow_dispatch ]
 
 env:
   CSV_FILE_PREFIX: https://pub-95669c22c66d453c92c62f20aa0c5b57.r2.dev
