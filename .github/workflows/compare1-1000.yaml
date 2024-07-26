@@ -14,32 +14,32 @@ jobs:
   benchmark-base:
     uses: ./.github/workflows/benchmark-template.yaml
     with:
-      runs-on: self-hosted
+      runs-on: ubuntu-latest
       branch: main
   frequency_1:
     uses: ./.github/workflows/benchmark-template.yaml
     with:
-      runs-on: self-hosted
+      runs-on: ubuntu-latest
       branch: frequency_1
   frequency_10:
     uses: ./.github/workflows/benchmark-template.yaml
     with:
-      runs-on: self-hosted
+      runs-on: ubuntu-latest
       branch: frequency_10
   frequency_100:
     uses: ./.github/workflows/benchmark-template.yaml
     with:
-      runs-on: self-hosted
+      runs-on: ubuntu-latest
       branch: frequency_100
   frequency_1000:
     uses: ./.github/workflows/benchmark-template.yaml
     with:
-      runs-on: self-hosted
+      runs-on: ubuntu-latest
       branch: frequency_1000
 
   compare1-1000:
     needs: [ benchmark-base, frequency_10, frequency_100, frequency_1000,frequency_1]
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/checkout@v4
