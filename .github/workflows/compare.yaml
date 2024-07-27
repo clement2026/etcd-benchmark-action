@@ -1,5 +1,5 @@
 ---
-name: compare1-1000
+name: compare
 permissions: read-all
 on: [ workflow_dispatch ]
 
@@ -11,7 +11,7 @@ env:
 #  PR: issue-17098-separate-raft-log-compact-from-snapshot
 
 jobs:
-  benchmark-base:
+  base:
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: self-hosted
@@ -47,7 +47,7 @@ jobs:
       runs-on: self-hosted
       branch: main_2
 
-  compare1-1000:
+  compare:
     needs: [ benchmark-base, every_1, every_10, every_100, every_1000, main_2 ]
     runs-on: self-hosted
     steps:
