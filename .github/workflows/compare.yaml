@@ -17,38 +17,38 @@ jobs:
       runs-on: self-hosted
       branch: main
   every_1:
-    needs: [ benchmark-base ]
+    needs: [ base ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: self-hosted
       branch: every_1
   every_10:
-    needs: [ benchmark-base ]
+    needs: [ base ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: self-hosted
       branch: every_10
   every_100:
-    needs: [ benchmark-base ]
+    needs: [ base ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: self-hosted
       branch: every_100
   every_1000:
-    needs: [ benchmark-base ]
+    needs: [ base ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: self-hosted
       branch: every_1000
   main_2:
-    needs: [ benchmark-base, every_1, every_10, every_100, every_1000 ]
+    needs: [ base, every_1, every_10, every_100, every_1000 ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: self-hosted
       branch: main_2
 
   compare:
-    needs: [ benchmark-base, every_1, every_10, every_100, every_1000, main_2 ]
+    needs: [ base, every_1, every_10, every_100, every_1000, main_2 ]
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
@@ -62,7 +62,7 @@ jobs:
           cache-dependency-path: etcd/go.sum
       - name: Load Results
         run: |
-          echo "${{ needs.benchmark-base.outputs.results }}" |  base64 -d > $BASE.csv
+          echo "${{ needs.base.outputs.results }}" |  base64 -d > $BASE.csv
           
           echo "${{ needs.main_2.outputs.results }}" |  base64 -d > main_2.csv
           echo "${{ needs.every_1.outputs.results }}" |  base64 -d > every_1.csv
