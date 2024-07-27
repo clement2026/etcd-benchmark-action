@@ -1,88 +1,88 @@
----
-name: compare
-permissions: read-all
-on: [ workflow_dispatch ]
-
-env:
-  CSV_FILE_PREFIX: https://pub-95669c22c66d453c92c62f20aa0c5b57.r2.dev
-  BUCKET: github-action
-  BASE: main
-  PR: main2
-#  PR: issue-17098-separate-raft-log-compact-from-snapshot
-
-jobs:
-  benchmark-base:
-    uses: ./.github/workflows/benchmark-template.yaml
-    with:
-      runs-on: self-hosted
-      branch: main
-  benchmark-pr:
-    uses: ./.github/workflows/benchmark-template.yaml
-    with:
-      runs-on: self-hosted
-      branch: main-2
-
-  compare:
-    needs: [ benchmark-base,benchmark-pr ]
-    runs-on: self-hosted
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/checkout@v4
-        with:
-          repository: 'clement2026/etcd'
-          path: etcd
-      - uses: actions/setup-go@v5
-        with:
-          go-version: '1.22'
-          cache-dependency-path: etcd/go.sum
-      - name: Load Results
-        run: |
-          echo "${{ needs.benchmark-base.outputs.results }}" |  base64 -d > $BASE.csv
-          echo "${{ needs.benchmark-pr.outputs.results }}" |  base64 -d > $PR.csv
-      - name: build rw-heatmaps
-        run: go build -C etcd/tools/rw-heatmaps
-      - name: compare
-        run: ./etcd/tools/rw-heatmaps/rw-heatmaps $BASE.csv $PR.csv -t "$BASE vs $PR" -o compare
-      - name: ls
-        run: ls
-      - name: zip
-        run: zip -r archive.zip *.csv *.jpg ./scripts/*.sh
-      - name: write names to env
-        run: |
-          DATE=$(date '+%Y%m%d-%H-%M-%S')
-          
-          BASE_CSV_OBJECT_NAME="etcd-benchmark-$DATE-$BASE.csv"
-          PR_CSV_OBJECT_NAME="etcd-benchmark-$DATE-$PR.csv"
-          COMPARE_READ_OBJECT_NAME="etcd-benchmark-$DATE-compare_read.jpg"
-          COMPARE_WRITE_OBJECT_NAME="etcd-benchmark-$DATE-compare_write.jpg"
-          ZIP_OBJECT_NAME="etcd-benchmark-$DATE.zip"
-          echo "BASE_CSV_OBJECT_NAME=$BASE_CSV_OBJECT_NAME" >> $GITHUB_ENV
-          echo "PR_CSV_OBJECT_NAME=$PR_CSV_OBJECT_NAME" >> $GITHUB_ENV
-          echo "COMPARE_READ_OBJECT_NAME=$COMPARE_READ_OBJECT_NAME" >> $GITHUB_ENV
-          echo "COMPARE_WRITE_OBJECT_NAME=$COMPARE_WRITE_OBJECT_NAME" >> $GITHUB_ENV
-          echo "ZIP_OBJECT_NAME=$ZIP_OBJECT_NAME" >> $GITHUB_ENV
-      #      - name: cpu mem
-      #        run: lscpu; free -h
-      - name: print md
-        run: |
-          echo "[archive.zip]($CSV_FILE_PREFIX/$ZIP_OBJECT_NAME)" >> "$GITHUB_STEP_SUMMARY"
-          echo "[$BASE.csv]($CSV_FILE_PREFIX/$BASE_CSV_OBJECT_NAME)" >> "$GITHUB_STEP_SUMMARY"
-          echo "[$PR.csv]($CSV_FILE_PREFIX/$PR_CSV_OBJECT_NAME)" >> "$GITHUB_STEP_SUMMARY"
-          echo "![]($CSV_FILE_PREFIX/$COMPARE_READ_OBJECT_NAME)" >> "$GITHUB_STEP_SUMMARY"
-          echo "![]($CSV_FILE_PREFIX/$COMPARE_WRITE_OBJECT_NAME)" >> "$GITHUB_STEP_SUMMARY"
-          cat <<EOL >> "$GITHUB_STEP_SUMMARY"
-          EOL
-      - name: Upload to R2
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: --version
-          postCommands: |
-            echo "*** post commands ***"
-            wrangler r2 object put $BUCKET/$BASE_CSV_OBJECT_NAME --file=$BASE.csv
-            wrangler r2 object put $BUCKET/$PR_CSV_OBJECT_NAME --file=$PR.csv
-            wrangler r2 object put $BUCKET/$COMPARE_READ_OBJECT_NAME --file=compare_read.jpg
-            wrangler r2 object put $BUCKET/$COMPARE_WRITE_OBJECT_NAME --file=compare_write.jpg
-            wrangler r2 object put $BUCKET/$ZIP_OBJECT_NAME --file=archive.zip
-            echo "******"
+#---
+#name: compare
+#permissions: read-all
+#on: [ workflow_dispatch ]
+#
+#env:
+#  CSV_FILE_PREFIX: https://pub-95669c22c66d453c92c62f20aa0c5b57.r2.dev
+#  BUCKET: github-action
+#  BASE: main
+#  PR: main2
+##  PR: issue-17098-separate-raft-log-compact-from-snapshot
+#
+#jobs:
+#  benchmark-base:
+#    uses: ./.github/workflows/benchmark-template.yaml
+#    with:
+#      runs-on: self-hosted
+#      branch: main
+#  benchmark-pr:
+#    uses: ./.github/workflows/benchmark-template.yaml
+#    with:
+#      runs-on: self-hosted
+#      branch: main-2
+#
+#  compare:
+#    needs: [ benchmark-base,benchmark-pr ]
+#    runs-on: self-hosted
+#    steps:
+#      - uses: actions/checkout@v4
+#      - uses: actions/checkout@v4
+#        with:
+#          repository: 'clement2026/etcd'
+#          path: etcd
+#      - uses: actions/setup-go@v5
+#        with:
+#          go-version: '1.22'
+#          cache-dependency-path: etcd/go.sum
+#      - name: Load Results
+#        run: |
+#          echo "${{ needs.benchmark-base.outputs.results }}" |  base64 -d > $BASE.csv
+#          echo "${{ needs.benchmark-pr.outputs.results }}" |  base64 -d > $PR.csv
+#      - name: build rw-heatmaps
+#        run: go build -C etcd/tools/rw-heatmaps
+#      - name: compare
+#        run: ./etcd/tools/rw-heatmaps/rw-heatmaps $BASE.csv $PR.csv -t "$BASE vs $PR" -o compare
+#      - name: ls
+#        run: ls
+#      - name: zip
+#        run: zip -r archive.zip *.csv *.jpg ./scripts/*.sh
+#      - name: write names to env
+#        run: |
+#          DATE=$(date '+%Y%m%d-%H-%M-%S')
+#
+#          BASE_CSV_OBJECT_NAME="etcd-benchmark-$DATE-$BASE.csv"
+#          PR_CSV_OBJECT_NAME="etcd-benchmark-$DATE-$PR.csv"
+#          COMPARE_READ_OBJECT_NAME="etcd-benchmark-$DATE-compare_read.jpg"
+#          COMPARE_WRITE_OBJECT_NAME="etcd-benchmark-$DATE-compare_write.jpg"
+#          ZIP_OBJECT_NAME="etcd-benchmark-$DATE.zip"
+#          echo "BASE_CSV_OBJECT_NAME=$BASE_CSV_OBJECT_NAME" >> $GITHUB_ENV
+#          echo "PR_CSV_OBJECT_NAME=$PR_CSV_OBJECT_NAME" >> $GITHUB_ENV
+#          echo "COMPARE_READ_OBJECT_NAME=$COMPARE_READ_OBJECT_NAME" >> $GITHUB_ENV
+#          echo "COMPARE_WRITE_OBJECT_NAME=$COMPARE_WRITE_OBJECT_NAME" >> $GITHUB_ENV
+#          echo "ZIP_OBJECT_NAME=$ZIP_OBJECT_NAME" >> $GITHUB_ENV
+#      #      - name: cpu mem
+#      #        run: lscpu; free -h
+#      - name: print md
+#        run: |
+#          echo "[archive.zip]($CSV_FILE_PREFIX/$ZIP_OBJECT_NAME)" >> "$GITHUB_STEP_SUMMARY"
+#          echo "[$BASE.csv]($CSV_FILE_PREFIX/$BASE_CSV_OBJECT_NAME)" >> "$GITHUB_STEP_SUMMARY"
+#          echo "[$PR.csv]($CSV_FILE_PREFIX/$PR_CSV_OBJECT_NAME)" >> "$GITHUB_STEP_SUMMARY"
+#          echo "![]($CSV_FILE_PREFIX/$COMPARE_READ_OBJECT_NAME)" >> "$GITHUB_STEP_SUMMARY"
+#          echo "![]($CSV_FILE_PREFIX/$COMPARE_WRITE_OBJECT_NAME)" >> "$GITHUB_STEP_SUMMARY"
+#          cat <<EOL >> "$GITHUB_STEP_SUMMARY"
+#          EOL
+#      - name: Upload to R2
+#        uses: cloudflare/wrangler-action@v3
+#        with:
+#          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+#          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+#          command: --version
+#          postCommands: |
+#            echo "*** post commands ***"
+#            wrangler r2 object put $BUCKET/$BASE_CSV_OBJECT_NAME --file=$BASE.csv
+#            wrangler r2 object put $BUCKET/$PR_CSV_OBJECT_NAME --file=$PR.csv
+#            wrangler r2 object put $BUCKET/$COMPARE_READ_OBJECT_NAME --file=compare_read.jpg
+#            wrangler r2 object put $BUCKET/$COMPARE_WRITE_OBJECT_NAME --file=compare_write.jpg
+#            wrangler r2 object put $BUCKET/$ZIP_OBJECT_NAME --file=archive.zip
+#            echo "******"
