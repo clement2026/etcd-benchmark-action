@@ -17,21 +17,25 @@ jobs:
       runs-on: self-hosted
       branch: main
   every_1:
+    needs: [ benchmark-base ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: self-hosted
       branch: every_1
   every_10:
+    needs: [ benchmark-base ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: self-hosted
       branch: every_10
   every_100:
+    needs: [ benchmark-base ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: self-hosted
       branch: every_100
   every_1000:
+    needs: [ benchmark-base ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: self-hosted
@@ -44,7 +48,7 @@ jobs:
       branch: main_2
 
   compare1-1000:
-    needs: [ main_2 ]
+    needs: [ benchmark-base, every_1, every_10, every_100, every_1000, main_2 ]
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
