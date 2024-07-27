@@ -7,7 +7,7 @@ env:
   CSV_FILE_PREFIX: https://pub-95669c22c66d453c92c62f20aa0c5b57.r2.dev
   BUCKET: github-action
   BASE: main
-  FREQUENCIES: "frequency_10 frequency_100 frequency_1000 frequency_1"
+  FREQUENCIES: "every_1 every_10 every_100 every_1000 main_2"
 #  PR: issue-17098-separate-raft-log-compact-from-snapshot
 
 jobs:
@@ -16,29 +16,34 @@ jobs:
     with:
       runs-on: ubuntu-latest
       branch: main
-  frequency_1:
+  main_2:
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: ubuntu-latest
-      branch: frequency_1
-  frequency_10:
+      branch: main_2
+  every_1:
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: ubuntu-latest
-      branch: frequency_10
-  frequency_100:
+      branch: every_1
+  every_10:
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: ubuntu-latest
-      branch: frequency_100
-  frequency_1000:
+      branch: every_10
+  every_100:
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: ubuntu-latest
-      branch: frequency_1000
+      branch: every_100
+  every_1000:
+    uses: ./.github/workflows/benchmark-template.yaml
+    with:
+      runs-on: ubuntu-latest
+      branch: every_1000
 
   compare1-1000:
-    needs: [ benchmark-base, frequency_10, frequency_100, frequency_1000,frequency_1]
+    needs: [ benchmark-base, main_2, every_1, every_10, every_100, every_1000 ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -54,10 +59,11 @@ jobs:
         run: |
           echo "${{ needs.benchmark-base.outputs.results }}" |  base64 -d > $BASE.csv
           
-          echo "${{ needs.frequency_1.outputs.results }}" |  base64 -d > frequency_1.csv
-          echo "${{ needs.frequency_10.outputs.results }}" |  base64 -d > frequency_10.csv
-          echo "${{ needs.frequency_100.outputs.results }}" |  base64 -d > frequency_100.csv
-          echo "${{ needs.frequency_1000.outputs.results }}" |  base64 -d > frequency_1000.csv
+          echo "${{ needs.main_2.outputs.results }}" |  base64 -d > main_2.csv
+          echo "${{ needs.every_1.outputs.results }}" |  base64 -d > every_1.csv
+          echo "${{ needs.every_10.outputs.results }}" |  base64 -d > every_10.csv
+          echo "${{ needs.every_100.outputs.results }}" |  base64 -d > every_100.csv
+          echo "${{ needs.every_1000.outputs.results }}" |  base64 -d > every_1000.csv
       - name: build rw-heatmaps
         run: go build -C etcd/tools/rw-heatmaps
       - name: compare
