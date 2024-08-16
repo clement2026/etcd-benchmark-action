@@ -17,7 +17,7 @@ jobs:
       branch: main
       script: benchmark-small.sh
   every_1:
-    if: ${{ ! contains(github.ref, 'refs/tags/') }}
+    if: ${{ ! contains(needs.base.outputs.results, 'DATA') }}
     needs: [ base ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
