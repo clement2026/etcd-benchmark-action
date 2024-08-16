@@ -59,6 +59,7 @@ jobs:
       script: benchmark-small.sh
 
   compare:
+    if: '!cancelled()'
     needs: [ base, every_1, every_10, every_100, every_1000, main_2 ]
     runs-on: ubuntu-latest
     steps:
