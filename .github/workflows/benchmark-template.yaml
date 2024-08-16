@@ -52,4 +52,4 @@ jobs:
       - name: Reboot
         continue-on-error: true
         timeout-minutes: 1
-        run: sleep 10 && sudo reboot
+        run: nohup sleep 3 && sudo reboot &
