@@ -53,6 +53,6 @@ jobs:
         continue-on-error: true
         timeout-minutes: 1
         run: |
-          nohup sleep 5 && sudo reboot &
+          nohup sleep 20 && sudo reboot &
           echo "nohup ok"
           exit
