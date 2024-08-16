@@ -8,7 +8,6 @@ env:
   BUCKET: github-action
   BASE: main
   FREQUENCIES: "every_1 every_10 every_100 every_1000 main_2"
-#  PR: issue-17098-separate-raft-log-compact-from-snapshot
 
 jobs:
   base:
@@ -18,7 +17,7 @@ jobs:
       branch: main
       script: benchmark-small.sh
   every_1:
-    if: '!cancelled()'
+    if: ${{ ! contains(github.ref, 'refs/tags/') }}
     needs: [ base ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
@@ -55,7 +54,7 @@ jobs:
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: ubuntu-latest
-      branch: main_2
+      branch: main
       script: benchmark-small.sh
 
   compare:
@@ -74,13 +73,13 @@ jobs:
           cache-dependency-path: etcd/go.sum
       - name: Load Results
         run: |
-          echo "${{ needs.base.outputs.results }}" |  base64 -d > $BASE.csv
+          echo "${{ needs.base.outputs.results }}" > $BASE.csv
           
-          echo "${{ needs.main_2.outputs.results }}" |  base64 -d > main_2.csv
-          echo "${{ needs.every_1.outputs.results }}" |  base64 -d > every_1.csv
-          echo "${{ needs.every_10.outputs.results }}" |  base64 -d > every_10.csv
-          echo "${{ needs.every_100.outputs.results }}" |  base64 -d > every_100.csv
-          echo "${{ needs.every_1000.outputs.results }}" |  base64 -d > every_1000.csv
+          echo "${{ needs.main_2.outputs.results }}" > main_2.csv
+          echo "${{ needs.every_1.outputs.results }}" > every_1.csv
+          echo "${{ needs.every_10.outputs.results }}" > every_10.csv
+          echo "${{ needs.every_100.outputs.results }}" > every_100.csv
+          echo "${{ needs.every_1000.outputs.results }}" > every_1000.csv
       - name: build rw-heatmaps
         run: go build -C etcd/tools/rw-heatmaps
       - name: compare

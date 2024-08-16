@@ -8,7 +8,6 @@ env:
   BUCKET: github-action
   BASE: main
   FREQUENCIES: "every_1 every_10 every_100 every_1000 main_2"
-#  PR: issue-17098-separate-raft-log-compact-from-snapshot
 
 jobs:
   base:
@@ -18,6 +17,7 @@ jobs:
       branch: main
       script: benchmark-large.sh
   every_1:
+    if: '!cancelled()'
     needs: [ base ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
@@ -26,6 +26,7 @@ jobs:
       script: benchmark-large.sh
 
   every_10:
+    if: '!cancelled()'
     needs: [ base ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
@@ -34,6 +35,7 @@ jobs:
       script: benchmark-large.sh
 
   every_100:
+    if: '!cancelled()'
     needs: [ base ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
@@ -42,6 +44,7 @@ jobs:
       script: benchmark-large.sh
 
   every_1000:
+    if: '!cancelled()'
     needs: [ base ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
@@ -50,14 +53,16 @@ jobs:
       script: benchmark-large.sh
 
   main_2:
+    if: '!cancelled()'
     needs: [ base, every_1, every_10, every_100, every_1000 ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: self-hosted
-      branch: main_2
+      branch: main
       script: benchmark-large.sh
 
   compare:
+    if: '!cancelled()'
     needs: [ base, every_1, every_10, every_100, every_1000, main_2 ]
     runs-on: self-hosted
     steps:
