@@ -6,7 +6,6 @@ on:
       runs-on:
         required: false
         type: string
-        default: self-hosted
       branch:
         required: true
         type: string
