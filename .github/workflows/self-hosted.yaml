@@ -15,7 +15,7 @@ jobs:
     with:
       runs-on: self-hosted
       branch: main
-      script: benchmark-small.sh
+      script: benchmark-big.sh
 
   sleep_1:
     needs: [ base ]
@@ -26,7 +26,7 @@ jobs:
     with:
       runs-on: self-hosted
       branch: step_1
-      script: benchmark-small.sh
+      script: benchmark-big.sh
 
   sleep_10:
     needs: [ step_1 ]
@@ -37,7 +37,7 @@ jobs:
     with:
       runs-on: self-hosted
       branch: step_10
-      script: benchmark-small.sh
+      script: benchmark-big.sh
 
   sleep_100:
     needs: [ step_10 ]
@@ -48,7 +48,7 @@ jobs:
     with:
       runs-on: self-hosted
       branch: step_100
-      script: benchmark-small.sh
+      script: benchmark-big.sh
 
   sleep_1000:
     needs: [ step_100 ]
@@ -59,7 +59,7 @@ jobs:
     with:
       runs-on: self-hosted
       branch: step_1000
-      script: benchmark-small.sh
+      script: benchmark-big.sh
 
   sleep_main_2:
     needs: [ step_1000 ]
@@ -70,7 +70,7 @@ jobs:
     with:
       runs-on: self-hosted
       branch: main_2
-      script: benchmark-small.sh
+      script: benchmark-big.sh
 
   sleep_compare:
     needs: [ main_2 ]
