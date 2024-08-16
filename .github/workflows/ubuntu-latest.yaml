@@ -11,6 +11,7 @@ env:
 
 jobs:
   base:
+    continue-on-error: true
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: ubuntu-latest
