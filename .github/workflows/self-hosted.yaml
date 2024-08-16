@@ -72,11 +72,8 @@ jobs:
       branch: main_2
       script: benchmark-small.sh
 
-  sleep_compare:
-    needs: [ main_2 ]
-    uses: ./.github/workflows/sleep.yaml
   compare:
-    needs: [ base, every_1, every_10, every_100, every_1000, main_2, sleep_compare ]
+    needs: [ base, every_1, every_10, every_100, every_1000, main_2 ]
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
