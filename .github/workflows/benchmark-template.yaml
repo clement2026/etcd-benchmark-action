@@ -50,5 +50,5 @@ jobs:
           RESULT_FILE=$(ls etcd/tools/rw-heatmaps/*.csv | head -n 1)
           echo results="$(base64 -w0 $RESULT_FILE)" >> "$GITHUB_OUTPUT"
       - name: Reboot
-        outcome: success
+        outcome: 'success'
         run: sudo reboot
