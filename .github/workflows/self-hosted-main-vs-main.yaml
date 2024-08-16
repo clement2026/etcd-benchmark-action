@@ -1,5 +1,5 @@
 ---
-name: self-hosted
+name: self-hosted-main-vs-main
 permissions: read-all
 on: [ workflow_dispatch ]
 
@@ -7,7 +7,7 @@ env:
   CSV_FILE_PREFIX: https://pub-95669c22c66d453c92c62f20aa0c5b57.r2.dev
   BUCKET: github-action
   BASE: main
-  STEPS: "step_1 step_10 step_100 step_1000 main_2"
+  STEPS: "main_2"
 
 jobs:
   base:
@@ -15,54 +15,10 @@ jobs:
     with:
       runs-on: self-hosted
       branch: main
-      script: benchmark-big.sh
-
-  sleep_1:
-    needs: [ base ]
-    uses: ./.github/workflows/sleep.yaml
-  step_1:
-    needs: [ sleep_1 ]
-    uses: ./.github/workflows/benchmark-template.yaml
-    with:
-      runs-on: self-hosted
-      branch: step_1
-      script: benchmark-big.sh
-
-  sleep_10:
-    needs: [ step_1 ]
-    uses: ./.github/workflows/sleep.yaml
-  step_10:
-    needs: [ sleep_10 ]
-    uses: ./.github/workflows/benchmark-template.yaml
-    with:
-      runs-on: self-hosted
-      branch: step_10
-      script: benchmark-big.sh
-
-  sleep_100:
-    needs: [ step_10 ]
-    uses: ./.github/workflows/sleep.yaml
-  step_100:
-    needs: [ sleep_100 ]
-    uses: ./.github/workflows/benchmark-template.yaml
-    with:
-      runs-on: self-hosted
-      branch: step_100
-      script: benchmark-big.sh
-
-  sleep_1000:
-    needs: [ step_100 ]
-    uses: ./.github/workflows/sleep.yaml
-  step_1000:
-    needs: [ sleep_1000 ]
-    uses: ./.github/workflows/benchmark-template.yaml
-    with:
-      runs-on: self-hosted
-      branch: step_1000
-      script: benchmark-big.sh
+      script: benchmark-middle.sh
 
   sleep_main_2:
-    needs: [ step_1000 ]
+    needs: [ base ]
     uses: ./.github/workflows/sleep.yaml
   main_2:
     needs: [ sleep_main_2 ]
@@ -70,13 +26,13 @@ jobs:
     with:
       runs-on: self-hosted
       branch: main
-      script: benchmark-big.sh
+      script: benchmark-middle.sh
 
   sleep_compare:
     needs: [ main_2 ]
     uses: ./.github/workflows/sleep.yaml
   compare:
-    needs: [ base, step_1, step_10, step_100, step_1000, main_2, sleep_compare ]
+    needs: [ base, main_2, sleep_compare ]
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
@@ -93,10 +49,6 @@ jobs:
           echo "${{ needs.base.outputs.results }}" |  base64 -d > $BASE.csv
           
           echo "${{ needs.main_2.outputs.results }}" |  base64 -d > main_2.csv
-          echo "${{ needs.step_1.outputs.results }}" |  base64 -d > step_1.csv
-          echo "${{ needs.step_10.outputs.results }}" |  base64 -d > step_10.csv
-          echo "${{ needs.step_100.outputs.results }}" |  base64 -d > step_100.csv
-          echo "${{ needs.step_1000.outputs.results }}" |  base64 -d > step_1000.csv
       - name: ls *.csv && cat *.csv
         run: ls *.csv && cat *.csv
       - name: build rw-heatmaps
