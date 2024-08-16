@@ -69,14 +69,14 @@ jobs:
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: self-hosted
-      branch: main
+      branch: main_2
       script: benchmark-small.sh
 
   sleep_compare:
     needs: [ main_2 ]
     uses: ./.github/workflows/sleep.yaml
   compare:
-    needs: [ sleep_compare ]
+    needs: [ base, every_1, every_10, every_100, every_1000, main_2, sleep_compare ]
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
@@ -97,6 +97,8 @@ jobs:
           echo "${{ needs.every_10.outputs.results }}" |  base64 -d > every_10.csv
           echo "${{ needs.every_100.outputs.results }}" |  base64 -d > every_100.csv
           echo "${{ needs.every_1000.outputs.results }}" |  base64 -d > every_1000.csv
+      - name: ls *.csv && cat *.csv
+        run: ls *.csv && cat *.csv
       - name: build rw-heatmaps
         run: go build -C etcd/tools/rw-heatmaps
       - name: compare
