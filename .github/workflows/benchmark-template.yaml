@@ -49,7 +49,5 @@ jobs:
         run: |
           RESULT_FILE=$(ls etcd/tools/rw-heatmaps/*.csv | head -n 1)
           echo results="$(base64 -w0 $RESULT_FILE)" >> "$GITHUB_OUTPUT"
-      - uses: webiny/action-post-run@3.1.0
-        id: post-run-command
-        with:
-          run: echo "this thing works!"
+      - name: reboot
+        run: sudo reboot
