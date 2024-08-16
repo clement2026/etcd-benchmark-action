@@ -1,0 +1,12 @@
+---
+name: sleep
+permissions: read-all
+on: [ workflow_call ]
+
+jobs:
+  # during sleep job, self-hosted machine can reboot without interrupting benchmark job
+  sleep:
+    runs-on: ubuntu-latest
+    steps:
+      - name: sleep
+        run: sleep 60

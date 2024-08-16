@@ -16,54 +16,67 @@ jobs:
       runs-on: self-hosted
       branch: main
       script: benchmark-small.sh
-  every_1:
-    if: ${{ !cancelled() && needs.base.outputs.results != '' }}
+
+  sleep_1:
     needs: [ base ]
+    uses: ./.github/workflows/sleep.yaml
+  every_1:
+    needs: [ sleep_1 ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: self-hosted
       branch: every_1
       script: benchmark-small.sh
 
-  every_10:
-    if: ${{ !cancelled() && needs.base.outputs.results != '' }}
+  sleep_10:
     needs: [ every_1 ]
+    uses: ./.github/workflows/sleep.yaml
+  every_10:
+    needs: [ sleep_10 ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: self-hosted
       branch: every_10
       script: benchmark-small.sh
 
-  every_100:
-    if: ${{ !cancelled() && needs.base.outputs.results != '' }}
+  sleep_100:
     needs: [ every_10 ]
+    uses: ./.github/workflows/sleep.yaml
+  every_100:
+    needs: [ sleep_100 ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: self-hosted
       branch: every_100
       script: benchmark-small.sh
 
-  every_1000:
-    if: ${{ !cancelled() && needs.base.outputs.results != '' }}
+  sleep_1000:
     needs: [ every_100 ]
+    uses: ./.github/workflows/sleep.yaml
+  every_1000:
+    needs: [ sleep_1000 ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: self-hosted
       branch: every_1000
       script: benchmark-small.sh
 
-  main_2:
-    if: ${{ !cancelled() && needs.base.outputs.results != '' }}
+  sleep_main_2:
     needs: [ every_1000 ]
+    uses: ./.github/workflows/sleep.yaml
+  main_2:
+    needs: [ sleep_main_2 ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: self-hosted
       branch: main
       script: benchmark-small.sh
 
+  sleep_compare:
+    needs: [ main_2 ]
+    uses: ./.github/workflows/sleep.yaml
   compare:
-    if: ${{ !cancelled() && needs.main_2.outputs.results != '' }}
-    needs: [ base, every_1, every_10, every_100, every_1000, main_2 ]
+    needs: [ sleep_compare ]
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4

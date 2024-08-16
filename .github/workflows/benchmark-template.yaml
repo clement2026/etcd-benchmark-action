@@ -18,14 +18,7 @@ on:
         value: ${{ jobs.benchmark.outputs.results }}
 
 jobs:
-# during sleep job, self-hosted machine can reboot without interrupting benchmark job
-  sleep:
-    runs-on: ubuntu-latest
-    steps:
-      - name: sleep
-        run: sleep 60
   benchmark:
-    needs: [ sleep ]
     runs-on: ${{ inputs.runs-on }}
     outputs:
       results: ${{ steps.run-benchmarks.outputs.results }}
