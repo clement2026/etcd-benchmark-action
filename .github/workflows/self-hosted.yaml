@@ -1,5 +1,5 @@
 ---
-name: compare
+name: self-hosted
 permissions: read-all
 on: [ workflow_dispatch ]
 
@@ -14,42 +14,52 @@ jobs:
   base:
     uses: ./.github/workflows/benchmark-template.yaml
     with:
-      runs-on: ubuntu-latest
+      runs-on: self-hosted
       branch: main
+      script: benchmark-large.sh
   every_1:
     needs: [ base ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
-      runs-on: ubuntu-latest
+      runs-on: self-hosted
       branch: every_1
+      script: benchmark-large.sh
+
   every_10:
     needs: [ base ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
-      runs-on: ubuntu-latest
+      runs-on: self-hosted
       branch: every_10
+      script: benchmark-large.sh
+
   every_100:
     needs: [ base ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
-      runs-on: ubuntu-latest
+      runs-on: self-hosted
       branch: every_100
+      script: benchmark-large.sh
+
   every_1000:
     needs: [ base ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
-      runs-on: ubuntu-latest
+      runs-on: self-hosted
       branch: every_1000
+      script: benchmark-large.sh
+
   main_2:
     needs: [ base, every_1, every_10, every_100, every_1000 ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
-      runs-on: ubuntu-latest
+      runs-on: self-hosted
       branch: main_2
+      script: benchmark-large.sh
 
   compare:
     needs: [ base, every_1, every_10, every_100, every_1000, main_2 ]
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
       - uses: actions/checkout@v4

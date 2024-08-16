@@ -9,6 +9,9 @@ on:
       branch:
         required: true
         type: string
+      script:
+        required: true
+        type: string
     outputs:
       results:
         description: The benchmark results
@@ -31,7 +34,7 @@ jobs:
           go-version: '1.22'
           cache-dependency-path: etcd/go.sum
       - name: Run script
-        run: chmod +x ./scripts/benchmark.sh && ./scripts/benchmark.sh
+        run: chmod +x ./scripts/${{ inputs.script }} && ./scripts/${{ inputs.script }}
       - name: ls -lh
         run: ls -lh etcd/tools/rw-heatmaps/*.csv
       - name: print md
@@ -46,3 +49,7 @@ jobs:
         run: |
           RESULT_FILE=$(ls etcd/tools/rw-heatmaps/*.csv | head -n 1)
           echo results="$(base64 -w0 $RESULT_FILE)" >> "$GITHUB_OUTPUT"
+      - uses: webiny/action-post-run@3.1.0
+        id: post-run-command
+        with:
+          run: echo "this thing works!"
