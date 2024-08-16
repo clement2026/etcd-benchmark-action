@@ -51,4 +51,5 @@ jobs:
           echo results="$(base64 -w0 $RESULT_FILE)" >> "$GITHUB_OUTPUT"
       - name: Reboot
         continue-on-error: true
+        timeout-minutes: 1
         run: sleep 10 && sudo reboot
