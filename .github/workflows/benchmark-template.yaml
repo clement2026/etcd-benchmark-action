@@ -49,10 +49,10 @@ jobs:
         run: |
           RESULT_FILE=$(ls etcd/tools/rw-heatmaps/*.csv | head -n 1)
           echo results="$(base64 -w0 $RESULT_FILE)" >> "$GITHUB_OUTPUT"
-      - name: Reboot
-        continue-on-error: true
-        timeout-minutes: 1
-        run: |
-          nohup sleep 20 && sudo reboot &
-          echo "nohup ok"
-          exit
+#      - name: Reboot
+#        continue-on-error: true
+#        timeout-minutes: 1
+#        run: |
+#          nohup sleep 20 && sudo reboot &
+#          echo "nohup ok"
+#          exit
