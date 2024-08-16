@@ -64,22 +64,17 @@ jobs:
           echo "![]($CSV_FILE_PREFIX/$COMPARE_WRITE_OBJECT_NAME)" >> "$GITHUB_STEP_SUMMARY"
           cat <<EOL >> "$GITHUB_STEP_SUMMARY"
           EOL
-#      - name: Upload to R2
-#        uses: cloudflare/wrangler-action@v3
-#        with:
-#          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-#          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-#          command: --version
-#          postCommands: |
-#            echo "*** post commands ***"
-#            wrangler r2 object put $BUCKET/$BASE_CSV_OBJECT_NAME --file=$BASE.csv
-#            wrangler r2 object put $BUCKET/$PR_CSV_OBJECT_NAME --file=$PR.csv
-#            wrangler r2 object put $BUCKET/$COMPARE_READ_OBJECT_NAME --file=compare_read.jpg
-#            wrangler r2 object put $BUCKET/$COMPARE_WRITE_OBJECT_NAME --file=compare_write.jpg
-#            wrangler r2 object put $BUCKET/$ZIP_OBJECT_NAME --file=archive.zip
-#            echo "******"
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload to R2
+        uses: cloudflare/wrangler-action@v3
         with:
-          name: Build
-          path: "*.jpg"
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: --version
+          postCommands: |
+            echo "*** post commands ***"
+            wrangler r2 object put $BUCKET/$BASE_CSV_OBJECT_NAME --file=$BASE.csv
+            wrangler r2 object put $BUCKET/$PR_CSV_OBJECT_NAME --file=$PR.csv
+            wrangler r2 object put $BUCKET/$COMPARE_READ_OBJECT_NAME --file=compare_read.jpg
+            wrangler r2 object put $BUCKET/$COMPARE_WRITE_OBJECT_NAME --file=compare_write.jpg
+            wrangler r2 object put $BUCKET/$ZIP_OBJECT_NAME --file=archive.zip
+            echo "******"

@@ -15,54 +15,54 @@ jobs:
     with:
       runs-on: self-hosted
       branch: main
-      script: benchmark-large.sh
+      script: benchmark-small.sh
   every_1:
-    if: '!cancelled()'
+    if: ${{ !cancelled() && needs.base.outputs.results != '' }}
     needs: [ base ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: self-hosted
       branch: every_1
-      script: benchmark-large.sh
+      script: benchmark-small.sh
 
   every_10:
-    if: '!cancelled()'
+    if: ${{ !cancelled() && needs.base.outputs.results != '' }}
     needs: [ base ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: self-hosted
       branch: every_10
-      script: benchmark-large.sh
+      script: benchmark-small.sh
 
   every_100:
-    if: '!cancelled()'
+    if: ${{ !cancelled() && needs.base.outputs.results != '' }}
     needs: [ base ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: self-hosted
       branch: every_100
-      script: benchmark-large.sh
+      script: benchmark-small.sh
 
   every_1000:
-    if: '!cancelled()'
+    if: ${{ !cancelled() && needs.base.outputs.results != '' }}
     needs: [ base ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: self-hosted
       branch: every_1000
-      script: benchmark-large.sh
+      script: benchmark-small.sh
 
   main_2:
-    if: '!cancelled()'
+    if: ${{ !cancelled() && needs.base.outputs.results != '' }}
     needs: [ base, every_1, every_10, every_100, every_1000 ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: self-hosted
       branch: main
-      script: benchmark-large.sh
+      script: benchmark-small.sh
 
   compare:
-    if: '!cancelled()'
+    if: ${{ !cancelled() && needs.main_2.outputs.results != '' }}
     needs: [ base, every_1, every_10, every_100, every_1000, main_2 ]
     runs-on: self-hosted
     steps:
