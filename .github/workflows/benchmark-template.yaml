@@ -18,8 +18,8 @@ on:
         value: ${{ jobs.benchmark.outputs.results }}
 
 jobs:
-  timeout-minutes: 1
   benchmark:
+    timeout-minutes: 1
     runs-on: ${{ inputs.runs-on }}
     outputs:
       results: ${{ steps.run-benchmarks.outputs.results }}
