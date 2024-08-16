@@ -27,7 +27,7 @@ jobs:
 
   every_10:
     if: ${{ !cancelled() && needs.base.outputs.results != '' }}
-    needs: [ base ]
+    needs: [ every_1 ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: self-hosted
@@ -36,7 +36,7 @@ jobs:
 
   every_100:
     if: ${{ !cancelled() && needs.base.outputs.results != '' }}
-    needs: [ base ]
+    needs: [ every_10 ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: self-hosted
@@ -45,7 +45,7 @@ jobs:
 
   every_1000:
     if: ${{ !cancelled() && needs.base.outputs.results != '' }}
-    needs: [ base ]
+    needs: [ every_100 ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: self-hosted
@@ -54,7 +54,7 @@ jobs:
 
   main_2:
     if: ${{ !cancelled() && needs.base.outputs.results != '' }}
-    needs: [ base, every_1, every_10, every_100, every_1000 ]
+    needs: [ every_1000 ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: self-hosted

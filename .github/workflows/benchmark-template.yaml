@@ -18,8 +18,14 @@ on:
         value: ${{ jobs.benchmark.outputs.results }}
 
 jobs:
+# during sleep job, self-hosted machine can reboot without interrupting benchmark job
+  sleep:
+    runs-on: ubuntu-latest
+    steps:
+      - name: sleep
+        run: sleep 60
   benchmark:
-    timeout-minutes: 1
+    needs: [ sleep ]
     runs-on: ${{ inputs.runs-on }}
     outputs:
       results: ${{ steps.run-benchmarks.outputs.results }}
@@ -50,10 +56,3 @@ jobs:
         run: |
           RESULT_FILE=$(ls etcd/tools/rw-heatmaps/*.csv | head -n 1)
           echo results="$(base64 -w0 $RESULT_FILE)" >> "$GITHUB_OUTPUT"
-#      - name: Reboot
-#        continue-on-error: true
-#        timeout-minutes: 1
-#        run: |
-#          nohup sleep 20 && sudo reboot &
-#          echo "nohup ok"
-#          exit
