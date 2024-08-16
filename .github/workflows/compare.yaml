@@ -14,42 +14,42 @@ jobs:
   base:
     uses: ./.github/workflows/benchmark-template.yaml
     with:
-      runs-on: self-hosted
+      runs-on: ubuntu-latest
       branch: main
   every_1:
     needs: [ base ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
-      runs-on: self-hosted
+      runs-on: ubuntu-latest
       branch: every_1
   every_10:
     needs: [ base ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
-      runs-on: self-hosted
+      runs-on: ubuntu-latest
       branch: every_10
   every_100:
     needs: [ base ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
-      runs-on: self-hosted
+      runs-on: ubuntu-latest
       branch: every_100
   every_1000:
     needs: [ base ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
-      runs-on: self-hosted
+      runs-on: ubuntu-latest
       branch: every_1000
   main_2:
     needs: [ base, every_1, every_10, every_100, every_1000 ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
-      runs-on: self-hosted
+      runs-on: ubuntu-latest
       branch: main_2
 
   compare:
     needs: [ base, every_1, every_10, every_100, every_1000, main_2 ]
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/checkout@v4
