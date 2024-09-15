@@ -10,4 +10,5 @@ echo RATIO_LIST=$RATIO_LIST
 echo REPEAT_COUNT=$REPEAT_COUNT
 echo RUN_COUNT=$RUN_COUNT
 
+
 cd ./tools/rw-heatmaps && ./rw-benchmark.sh
