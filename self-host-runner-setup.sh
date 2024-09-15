@@ -21,8 +21,27 @@ echo 'ACTIONS_RUNNER_HOOK_JOB_COMPLETED=/home/gh/cleanup.sh' > actions-runner/.e
 echo 'echo "$(TZ=Asia/Singapore date) change /home/gh/monitor" | tee >> /home/gh/monitor' > cleanup.sh
 chmod a+x cleanup.sh
 
+echo '#!/bin/bash
+
+      output_file="/home/gh/memory_swap_usage.log"
+
+      while true; do
+        current_time=$(date +"%I:%M:%S %p")
+        mem_usage=$(free -h | awk "/Mem:/ {print $3}")
+        swap_usage=$(free -h | awk "/Swap:/ {print $3}")
+        disk_usage=$(df -h / | awk "NR==2 {print $3}")
+
+        echo "$current_time  mem: $mem_usage swap: $swap_usage disk: $disk_usage" | tee >> $output_file
+
+        sleep 1
+      done
+' > record-memory.sh
+chmod a+x record-memory.sh
+
+
 crontab -e
 
+@reboot /home/gh/record-memory.sh
 @reboot /home/gh/actions-runner/run.sh
 @reboot echo "$(TZ=Asia/Singapore date)" >> /home/gh/reboot.log
 @reboot touch /home/gh/monitor && while inotifywait -r /home/gh/monitor -e create,delete,modify; do { echo "reboot in 15s" && sleep 15 && sudo reboot; }; done

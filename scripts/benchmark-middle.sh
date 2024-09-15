@@ -15,5 +15,12 @@ echo VALUE_SIZE_POWER_RANGE=$VALUE_SIZE_POWER_RANGE
 echo CONN_CLI_COUNT_POWER_RANGE=$CONN_CLI_COUNT_POWER_RANGE
 #echo KEY_SPACE_SIZE=$KEY_SPACE_SIZE
 
+if [ ! -d "./tools/rw-heatmaps/rw-benchmark.sh" ]; then
+    echo "benchmark tools doesn't exist."
+    # if v3.5 has no benchmark tools
+    cd ../etcdv36 && make tools && cp -r ./bin/tools ../etcd/bin &&  cp -r ./tools/rw-heatmaps ../etcd/tools && cd ../etcd
+else
+    echo "benchmark tools exists."
+fi
 
 cd ./tools/rw-heatmaps && ./rw-benchmark.sh
