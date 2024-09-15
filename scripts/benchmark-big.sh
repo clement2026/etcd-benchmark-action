@@ -10,13 +10,4 @@ echo RATIO_LIST=$RATIO_LIST
 echo REPEAT_COUNT=$REPEAT_COUNT
 echo RUN_COUNT=$RUN_COUNT
 
-if [ ! -d "./tools/rw-heatmaps/rw-benchmark.sh" ]; then
-    echo "benchmark tools doesn't exist."
-    # if v3.5 has no benchmark tools
-    cd ../etcdv36 && make tools && cp -r ./bin/tools ../etcd/bin &&  cp -r ./tools/rw-heatmaps ../etcd/tools && cd ../etcd
-else
-    echo "benchmark tools exists."
-fi
-
-
 cd ./tools/rw-heatmaps && ./rw-benchmark.sh

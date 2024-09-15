@@ -15,7 +15,7 @@ jobs:
     with:
       runs-on: self-hosted
       branch: release-3.5
-      script: benchmark-big.sh
+      script: benchmark-big-v3.5.sh
 
   sleep_1:
     needs: [ base ]
@@ -26,7 +26,7 @@ jobs:
     with:
       runs-on: self-hosted
       branch: v3_5-backport-DefaultSnapshotCount-10k
-      script: benchmark-big.sh
+      script: benchmark-big-v3.5.sh
 
   sleep_2:
     needs: [ backport ]
@@ -37,7 +37,7 @@ jobs:
     with:
       runs-on: self-hosted
       branch: release-3.5
-      script: benchmark-big.sh
+      script: benchmark-big-v3.5.sh
   compare:
     needs: [ base, backport, v3_5_again ]
     runs-on: self-hosted
