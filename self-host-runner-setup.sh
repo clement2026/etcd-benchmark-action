@@ -16,7 +16,6 @@ sudo chown gh:gh /home/gh/.bash_profile
 # login to new user now
 follow https://github.com/clement2026/etcd-benchmark-action/settings/actions/runners/new?arch=x64&os=linux
 
-
 echo 'ACTIONS_RUNNER_HOOK_JOB_COMPLETED=/home/gh/cleanup.sh' > actions-runner/.env
 echo 'echo "$(TZ=Asia/Singapore date) change /home/gh/monitor" | tee >> /home/gh/monitor' > cleanup.sh
 chmod a+x cleanup.sh
