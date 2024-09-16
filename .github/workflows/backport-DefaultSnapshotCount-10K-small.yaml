@@ -1,5 +1,5 @@
 ---
-name: backport-DefaultSnapshotCount-10K
+name: backport-DefaultSnapshotCount-10K-small
 permissions: read-all
 on: [ workflow_dispatch ]
 
