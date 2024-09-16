@@ -38,6 +38,11 @@ jobs:
       runs-on: self-hosted
       branch: release-3.5
       script: benchmark-v3.5-small.sh
+
+  sleep_compare:
+    needs: [ sleep_2 ]
+    uses: ./.github/workflows/sleep.yaml
+
   compare:
     needs: [ base, backport, v3_5_again ]
     runs-on: self-hosted
