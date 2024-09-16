@@ -1,4 +1,4 @@
-apt-get update && apt install -y npm bash-completion emacs
+apt-get update && apt install -y npm bash-completion emacs inotify-tools
 
 sudo useradd -m gh && sudo mkdir -p /home/gh/.ssh && sudo cp ~/.ssh/authorized_keys /home/gh/.ssh/ && sudo chown -R gh:gh /home/gh/.ssh && sudo chmod 700 /home/gh/.ssh && sudo chmod 600 /home/gh/.ssh/authorized_keys
 
