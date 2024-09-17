@@ -40,7 +40,7 @@ jobs:
       script: benchmark-v3.5-big.sh
 
   sleep_compare:
-    needs: [ sleep_2 ]
+    needs: [ v3_5_again ]
     uses: ./.github/workflows/sleep.yaml
 
   compare:
