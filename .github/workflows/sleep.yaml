@@ -9,4 +9,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: sleep
-        run: sleep 120s
+        run: sleep 180s
