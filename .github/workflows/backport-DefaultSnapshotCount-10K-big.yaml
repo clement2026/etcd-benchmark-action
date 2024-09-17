@@ -44,7 +44,7 @@ jobs:
     uses: ./.github/workflows/sleep.yaml
 
   compare:
-    needs: [ base, backport, v3_5_again, sleep_2 ]
+    needs: [ base, backport, v3_5_again, sleep_compare ]
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
