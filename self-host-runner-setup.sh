@@ -41,7 +41,7 @@ chmod a+x record-memory.sh
 crontab -e
 
 @reboot /home/gh/record-memory.sh
-@reboot /home/gh/actions-runner/run.sh
+@reboot /home/gh/actions-runner/run.sh >> /home/gh/runner.log 2>&1
 @reboot echo "$(TZ=Asia/Singapore date)" >> /home/gh/reboot.log
 @reboot touch /home/gh/monitor && while inotifywait -r /home/gh/monitor -e create,delete,modify; do { echo "reboot in 15s" && sleep 15 && sudo reboot; }; done
 
