@@ -1,5 +1,5 @@
 ---
-name: self-hosted
+name: self-hosted-small
 permissions: read-all
 on: [ workflow_dispatch ]
 
