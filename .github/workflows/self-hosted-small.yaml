@@ -1,50 +1,82 @@
 ---
-name: backport-DefaultSnapshotCount-10K
+name: self-hosted
 permissions: read-all
 on: [ workflow_dispatch ]
 
 env:
   CSV_FILE_PREFIX: https://pub-95669c22c66d453c92c62f20aa0c5b57.r2.dev
   BUCKET: github-action
-  BASE: release-3.5
-  STEPS: "backport v3_5_again"
+  BASE: main
+  STEPS: "step_1 step_10 step_100 step_1000 main_2"
 
 jobs:
   base:
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: self-hosted
-      branch: release-3.5
-      script: benchmark-v3.5-big.sh
+      branch: main
+      script: benchmark-small.sh
 
   sleep_1:
     needs: [ base ]
     uses: ./.github/workflows/sleep.yaml
-  backport:
+  step_1:
     needs: [ sleep_1 ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: self-hosted
-      branch: v3_5-backport-DefaultSnapshotCount-10k
-      script: benchmark-v3.5-big.sh
+      branch: step_1
+      script: benchmark-small.sh
 
-  sleep_2:
-    needs: [ backport ]
+  sleep_10:
+    needs: [ step_1 ]
     uses: ./.github/workflows/sleep.yaml
-  v3_5_again:
-    needs: [ sleep_2 ]
+  step_10:
+    needs: [ sleep_10 ]
     uses: ./.github/workflows/benchmark-template.yaml
     with:
       runs-on: self-hosted
-      branch: release-3.5
-      script: benchmark-v3.5-big.sh
+      branch: step_10
+      script: benchmark-small.sh
+
+  sleep_100:
+    needs: [ step_10 ]
+    uses: ./.github/workflows/sleep.yaml
+  step_100:
+    needs: [ sleep_100 ]
+    uses: ./.github/workflows/benchmark-template.yaml
+    with:
+      runs-on: self-hosted
+      branch: step_100
+      script: benchmark-small.sh
+
+  sleep_1000:
+    needs: [ step_100 ]
+    uses: ./.github/workflows/sleep.yaml
+  step_1000:
+    needs: [ sleep_1000 ]
+    uses: ./.github/workflows/benchmark-template.yaml
+    with:
+      runs-on: self-hosted
+      branch: step_1000
+      script: benchmark-small.sh
+
+  sleep_main_2:
+    needs: [ step_1000 ]
+    uses: ./.github/workflows/sleep.yaml
+  main_2:
+    needs: [ sleep_main_2 ]
+    uses: ./.github/workflows/benchmark-template.yaml
+    with:
+      runs-on: self-hosted
+      branch: main
+      script: benchmark-small.sh
 
   sleep_compare:
-    needs: [ v3_5_again ]
+    needs: [ main_2 ]
     uses: ./.github/workflows/sleep.yaml
-
   compare:
-    needs: [ base, backport, v3_5_again, sleep_compare ]
+    needs: [ base, step_1, step_10, step_100, step_1000, main_2, sleep_compare ]
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
@@ -60,8 +92,11 @@ jobs:
         run: |
           echo "${{ needs.base.outputs.results }}" |  base64 -d > $BASE.csv
           
-          echo "${{ needs.backport.outputs.results }}" |  base64 -d > backport.csv
-          echo "${{ needs.v3_5_again.outputs.results }}" |  base64 -d > v3_5_again.csv
+          echo "${{ needs.main_2.outputs.results }}" |  base64 -d > main_2.csv
+          echo "${{ needs.step_1.outputs.results }}" |  base64 -d > step_1.csv
+          echo "${{ needs.step_10.outputs.results }}" |  base64 -d > step_10.csv
+          echo "${{ needs.step_100.outputs.results }}" |  base64 -d > step_100.csv
+          echo "${{ needs.step_1000.outputs.results }}" |  base64 -d > step_1000.csv
       - name: ls *.csv && cat *.csv
         run: ls *.csv && cat *.csv
       - name: build rw-heatmaps

@@ -4,7 +4,7 @@ permissions: read-all
 on: [ workflow_call ]
 
 jobs:
-  # during sleep job, self-hosted machine can reboot without interrupting benchmark job
+  # during sleep job, self-hosted machine can restart without interrupting benchmark job
   sleep:
     runs-on: ubuntu-latest
     steps:
